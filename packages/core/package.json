@@ -1,0 +1,36 @@
+{
+  "name": "@zh-keyboard/core",
+  "version": "0.1.0",
+  "description": "中文虚拟键盘组件库核心包",
+  "author": "dusionlike",
+  "license": "Apache 2.0",
+  "keywords": [
+    "keyboard",
+    "chinese",
+    "virtual-keyboard",
+    "component"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "tsdown": "^0.11.1",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

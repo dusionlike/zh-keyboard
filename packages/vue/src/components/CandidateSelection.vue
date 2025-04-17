@@ -1,0 +1,121 @@
+<script setup lang="ts">
+const props = defineProps<{ candidates: string[] }>()
+const emit = defineEmits<{
+  (e: 'select', candidate: string): void
+  (e: 'close'): void
+}>()
+
+function selectCandidate(candidate: string) {
+  emit('select', candidate)
+}
+
+function closeModal() {
+  emit('close')
+}
+</script>
+
+<template>
+  <div class="zhk-selection">
+    <div class="zhk-selection__list">
+      <div v-for="(candidate, index) in props.candidates" :key="index" class="zhk-selection__text" @click="selectCandidate(candidate)">
+        {{ candidate }}
+      </div>
+    </div>
+    <div class="zhk-selection__func">
+      <button class="zhk-selection__func-btn" @click="closeModal">
+        返回
+      </button>
+    </div>
+  </div>
+</template>
+
+<style lang="scss">
+$background-color: #f5f5f5;
+
+.zhk-selection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: $background-color;
+
+  z-index: 2;
+
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--gap);
+  gap: var(--gap);
+
+  box-sizing: border-box;
+
+  &__list {
+    flex: 5;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--keyboard-height) / 6), 1fr));
+    background-color: var(--key-background-color, #fff);
+
+    /* 添加滚动条功能 */
+    max-height: calc(100% - 16px); /* 减去上下padding */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* 美化滚动条样式 */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--border-color, #dcdcdc);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+  }
+
+  &__text {
+    font-size: var(--candidate-font-size);
+    padding: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color, #dcdcdc);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--hover-key-color, #f0f0f0);
+      z-index: 1;
+    }
+  }
+
+  &__func {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__func-btn {
+    width: 100%;
+
+    font-size: var(--key-font-size);
+
+    border: 1px solid var(--border-color, #dcdcdc);
+    border-radius: var(--key-border-radius, 5px);
+    background-color: var(--function-key-color, #e6e6e6);
+    padding: 12px 0;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.1s;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: var(--key-background-color, #fff);
+    }
+  }
+}
+</style>
