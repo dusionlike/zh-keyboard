@@ -1,0 +1,9 @@
+{
+  "eslint.useFlatConfig": true,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "html.format.wrapAttributes": "preserve",
+  "typescript.tsdk": "node_modules\\typescript\\lib"
+}

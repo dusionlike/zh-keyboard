@@ -1,0 +1,41 @@
+{
+  "name": "@zh-keyboard/vue",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "基于Vue的中文虚拟键盘组件",
+  "author": "dusionlike",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/zh-keyboard-vue.js",
+      "require": "./dist/zh-keyboard-vue.umd.cjs"
+    },
+    "./index.css": "./dist/index.css"
+  },
+  "main": "./dist/zh-keyboard-vue.umd.cjs",
+  "module": "./dist/zh-keyboard-vue.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vueuse/core": "^13.1.0",
+    "@zh-keyboard/core": "workspace:*",
+    "@zh-keyboard/recognizer": "workspace:*",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.2",
+    "@vue/tsconfig": "^0.7.0",
+    "sass-embedded": "^1.86.3",
+    "typescript": "~5.7.2",
+    "vite": "^6.3.1",
+    "vite-plugin-dts": "^4.5.3",
+    "vue-tsc": "^2.2.8"
+  }
+}

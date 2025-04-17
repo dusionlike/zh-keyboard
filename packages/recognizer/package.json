@@ -1,0 +1,43 @@
+{
+  "name": "@zh-keyboard/recognizer",
+  "version": "0.1.0",
+  "description": "中文手写汉字识别器组件",
+  "author": "dusionlike",
+  "license": "Apache 2.0",
+  "keywords": [
+    "键盘",
+    "中文",
+    "虚拟键盘",
+    "手写识别",
+    "汉字识别",
+    "中文输入法",
+    "组件"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "@zh-keyboard/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "^0.11.1",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}
