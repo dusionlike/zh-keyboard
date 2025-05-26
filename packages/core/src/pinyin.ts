@@ -22,11 +22,24 @@ export class SimplePinyinEngine {
     this.candidates = []
 
     if (this.currentInput) {
-      // 查找匹配的拼音
-      const matchedWords = this.pinyinMap[this.currentInput] || ''
+      // 分别存储完整匹配和前缀匹配的结果
+      let exactMatch = ''
+      let prefixMatch = ''
 
-      // 将匹配的字转换为候选词
-      this.candidates = matchedWords.split('')
+      for (const [pinyin, chars] of Object.entries(this.pinyinMap)) {
+        if (pinyin === this.currentInput) {
+          // 完整匹配
+          exactMatch += chars
+        } else if (pinyin.startsWith(this.currentInput)) {
+          // 前缀匹配
+          prefixMatch += chars
+        }
+      }
+
+      // 先添加完整匹配的结果，再添加前缀匹配的结果
+      this.candidates = [
+        ...new Set([...exactMatch.split(''), ...prefixMatch.split('')]),
+      ]
     }
 
     return this.candidates
