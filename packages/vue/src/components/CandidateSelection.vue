@@ -59,7 +59,7 @@ $background-color: #f5f5f5;
     background-color: var(--key-background-color, #fff);
 
     /* 添加滚动条功能 */
-    max-height: calc(100% - 16px); /* 减去上下padding */
+    max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
 
