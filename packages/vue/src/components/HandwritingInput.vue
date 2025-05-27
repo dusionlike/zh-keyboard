@@ -102,6 +102,20 @@ function handleSelection(candidate: string) {
       @select="handleSelection"
     />
     <div ref="containerRef" class="handwriting-content">
+      <div class="handwriting-buttons">
+        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '。' })">
+          。
+        </button>
+        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '？' })">
+          ？
+        </button>
+        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '！' })">
+          ！
+        </button>
+        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '、' })">
+          、
+        </button>
+      </div>
       <div class="handwriting-canvas-container">
         <canvas
           ref="canvasRef"
@@ -117,7 +131,7 @@ function handleSelection(candidate: string) {
         <button class="handwriting-btn handwriting-btn--function" @click="emit('exit')">
           返回
         </button>
-        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '，', isControl: true })">
+        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '，' })">
           ，
         </button>
         <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: 'enter', isControl: true })">
@@ -165,7 +179,7 @@ function handleSelection(candidate: string) {
     justify-content: space-between;
     gap: var(--gap);
 
-    max-width: 134px;
+    max-width: calc(var(--keyboard-height) / 4);
     height: 100%;
   }
 
