@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
-import { SimplePinyinEngine } from '@zh-keyboard/core'
-import { computed, ref } from 'vue'
+import { AdvancedPinyinEngine } from '@zh-keyboard/core'
+import { computed, ref, watchEffect } from 'vue'
 import CandidateList from './CandidateList.vue'
 import CandidateSelection from './CandidateSelection.vue'
 
@@ -15,11 +15,13 @@ const currentPinyin = defineModel<string>({
 })
 
 // 拼音输入法引擎
-const inputEngine = new SimplePinyinEngine()
+const inputEngine = new AdvancedPinyinEngine()
 
 // 候选词列表
-const candidates = computed(() => {
-  return inputEngine.processInput(currentPinyin.value)
+const candidates = ref<string[]>([])
+
+watchEffect(async () => {
+  candidates.value = await inputEngine.processInput(currentPinyin.value)
 })
 
 const visibleCandidates = computed(() => candidates.value.slice(0, 30))
@@ -28,6 +30,7 @@ const isSelectionOpen = ref(false)
 
 // 选择候选词
 function handleSelection(selected: string) {
+  inputEngine.selectCandidate(selected)
   emit('input', selected)
   currentPinyin.value = ''
   isSelectionOpen.value = false

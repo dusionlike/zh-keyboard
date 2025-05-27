@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      dexie:
+        specifier: ^4.0.11
+        version: 4.0.11
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^4.12.0
@@ -16,6 +20,10 @@ importers:
         version: 18.19.86
 
   packages/core:
+    dependencies:
+      dexie:
+        specifier: ^4.0.11
+        version: 4.0.11
     devDependencies:
       tsdown:
         specifier: ^0.11.1
@@ -1520,6 +1528,9 @@ packages:
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
+
+  dexie@4.0.11:
+    resolution: {integrity: sha512-SOKO002EqlvBYYKQSew3iymBoN2EQ4BDw/3yprjh7kAfFzjBYkaMNa/pZvcA7HSWlcKSQb9XhPe3wKyQ0x4A8A==}
 
   diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
@@ -4384,6 +4395,8 @@ snapshots:
   devlop@1.1.0:
     dependencies:
       dequal: 2.0.3
+
+  dexie@4.0.11: {}
 
   diff-sequences@29.6.3: {}
 
