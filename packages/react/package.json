@@ -1,0 +1,54 @@
+{
+  "name": "@zh-keyboard/react",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "基于React的中文虚拟键盘组件",
+  "author": "dusionlike",
+  "keywords": [
+    "keyboard",
+    "chinese",
+    "virtual-keyboard",
+    "react",
+    "component",
+    "键盘",
+    "中文",
+    "虚拟键盘",
+    "拼音",
+    "手写"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/zh-keyboard-react.js",
+      "require": "./dist/zh-keyboard-react.umd.cjs"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "main": "./dist/zh-keyboard-react.umd.cjs",
+  "module": "./dist/zh-keyboard-react.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@reactuses/core": "^6.0.3",
+    "@zh-keyboard/core": "workspace:*",
+    "@zh-keyboard/recognizer": "workspace:*",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "sass-embedded": "^1.86.3",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  }
+}

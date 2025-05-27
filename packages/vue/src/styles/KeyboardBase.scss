@@ -1,0 +1,100 @@
+.zhk-base {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  padding: var(--gap);
+  box-sizing: border-box;
+
+  &__row {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    gap: var(--gap);
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__key {
+    width: var(--key-width);
+    flex: none;
+    min-height: 40px;
+    border: 1px solid var(--border-color, #dcdcdc);
+    border-radius: var(--key-border-radius, 5px);
+    background-color: var(--key-background-color, #fff);
+    color: var(--key-text-color, #333);
+    font-size: var(--key-font-size);
+    cursor: pointer;
+    transition: all 0.1s;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &--function {
+      flex: none;
+      width: var(--key-width);
+      min-width: var(--key-min-width-function);
+      background-color: var(--function-key-color, #e6e6e6);
+      font-weight: bold;
+    }
+
+    &--shift,
+    &--delete {
+      flex: 1;
+      width: auto;
+    }
+
+    &--space {
+      flex: 1;
+      width: auto;
+      min-width: 20px;
+    }
+
+    &--active {
+      background-color: var(--primary-color, #4CAF50);
+      border-color: var(--primary-color, #4CAF50);
+      color: white;
+
+      .zhk-base__key-icon {
+        filter: brightness(0) invert(1);
+      }
+    }
+
+    &--disabled {
+      background-color: var(--disabled-key-color, #f5f5f5);
+      border-color: var(--disabled-key-border-color, #e0e0e0);
+      color: var(--disabled-key-text-color, #bdbdbd);
+      cursor: not-allowed;
+
+      .zhk-base__key-icon {
+        filter: brightness(0.7);
+      }
+    }
+  }
+
+  &__key-icon {
+    width: var(--key-icon-size);
+    height: var(--key-icon-size);
+    vertical-align: middle;
+    display: inline-block;
+  }
+
+  &__toggle-main {
+    font-size: max(14px, calc(var(--keyboard-height) / 30));
+  }
+
+  &__toggle-sub {
+    font-size: max(12px, calc(var(--keyboard-height) / 40));
+    color: var(--toggle-sub-color, #888);
+    margin-left: 2px;
+  }
+}

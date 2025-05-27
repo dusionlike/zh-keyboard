@@ -8,6 +8,7 @@ import HandwritingInput from './HandwritingInput.vue'
 import KeyboardBase from './KeyboardBase.vue'
 import NumericKeyboard from './NumericKeyboard.vue'
 import SymbolKeyboard from './SymbolKeyboard.vue'
+import '../styles/ZhKeyboard.scss'
 
 const props = defineProps<{
   /**
@@ -140,6 +141,20 @@ function handleRecognize(results: string[]) {
 
 const { height: rawKeyboardHeight } = useElementSize(keyboardRef, { width: 400, height: 300 })
 const keyboardHeight = computed(() => `${rawKeyboardHeight.value}px`)
+
+const rootStyle = computed(() => {
+  const positionStyle = props.position !== 'static' && keyboardPosition.value
+    ? {
+        top: `${keyboardPosition.value.top}px`,
+        left: `${keyboardPosition.value.left}px`,
+      }
+    : {}
+
+  return {
+    '--keyboard-height': keyboardHeight.value,
+    ...positionStyle,
+  }
+})
 </script>
 
 <template>
@@ -154,10 +169,7 @@ const keyboardHeight = computed(() => `${rawKeyboardHeight.value}px`)
         'zhk--bottom': position === 'bottom',
         'zhk--disabled': isKeyboardDisabled,
       }"
-      :style="position !== 'static' && keyboardPosition ? {
-        top: `${keyboardPosition.top}px`,
-        left: `${keyboardPosition.left}px`,
-      } : {}"
+      :style="rootStyle"
       @mousedown.prevent
     >
       <div v-if="isKeyboardDisabled" class="zhk__disabled-overlay">
@@ -190,83 +202,3 @@ const keyboardHeight = computed(() => `${rawKeyboardHeight.value}px`)
     </div>
   </Teleport>
 </template>
-
-<style lang="scss">
-$primary-color: #4CAF50;
-$primary-hover-color: #3e8e41;
-$background-color: #f5f5f5;
-$key-background-color: #fff;
-$key-text-color: #333;
-$function-key-color: #e6e6e6;
-$border-color: #dcdcdc;
-$border-radius: 8px;
-$key-border-radius: 5px;
-$box-shadow-color: rgba(0, 0, 0, 0.1);
-
-.zhk {
-  --keyboard-height: v-bind(keyboardHeight);
-  --key-font-size: max(1rem, calc(var(--keyboard-height) / 20));
-  --candidate-font-size: max(24px, calc(var(--keyboard-height) / 12));
-  --gap: 4px;
-  --key-width: calc((100% - 9 * var(--gap)) / 10);
-  --key-min-width-function: 45px;
-  --key-icon-size: calc(var(--key-font-size) * 1.2);
-
-  position: relative;
-  width: 100%;
-  width: 400px;
-  min-width: calc(var(--keyboard-height) + 100px);
-  max-width: 1080px;
-  height: 300px;
-  min-height: 300px;
-  overflow: hidden;
-  background-color: $background-color;
-  border-radius: $border-radius;
-  box-shadow: 0 2px 10px $box-shadow-color;
-  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-  user-select: none;
-
-  &--disabled {
-    opacity: 0.7;
-  }
-
-  &--floating {
-    position: absolute;
-    z-index: 9999;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  &--bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    max-width: 100%;
-    z-index: 9999;
-    border-radius: $border-radius $border-radius 0 0;
-    box-shadow: 0 -2px 10px $box-shadow-color;
-  }
-
-  &__disabled-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(245, 245, 245, 0.8);
-    z-index: 10;
-    border-radius: $border-radius;
-
-    span {
-      font-size: 16px;
-      color: #666;
-      padding: 15px 30px;
-      background-color: #e0e0e0;
-      border-radius: 5px;
-    }
-  }
-}
-</style>

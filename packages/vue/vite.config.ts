@@ -7,6 +7,9 @@ import dts from 'vite-plugin-dts'
 export default defineConfig((env) => {
   if (env.command === 'serve') {
     return {
+      server: {
+        port: 5174,
+      },
       plugins: [
         vue(),
       ],

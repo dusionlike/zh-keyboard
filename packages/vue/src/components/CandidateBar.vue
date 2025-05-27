@@ -4,6 +4,7 @@ import { AdvancedPinyinEngine } from '@zh-keyboard/core'
 import { computed, ref, watchEffect } from 'vue'
 import CandidateList from './CandidateList.vue'
 import CandidateSelection from './CandidateSelection.vue'
+import '../styles/CandidateBar.scss'
 
 const emit = defineEmits<{
   (e: 'key', payload: KeyEvent): void
@@ -69,47 +70,3 @@ function handleSelection(selected: string) {
     />
   </div>
 </template>
-
-<style lang="scss">
-.zhk-candidate {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-
-  &__container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #f5f5f5;
-  }
-
-  &__pinyin {
-    flex: 1;
-    font-size: var(--key-font-size);
-    color: var(--primary-color, #4CAF50);
-    box-sizing: border-box;
-  }
-
-  &__bottom-container {
-    flex: 3;
-    display: flex;
-    align-items: center;
-    gap: var(--gap);
-    width: 100%;
-  }
-
-  &__more {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    width: max(36px, calc(var(--keyboard-height) / 8));
-    background: none;
-    border: none;
-  }
-}
-</style>

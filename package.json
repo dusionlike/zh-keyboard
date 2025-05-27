@@ -8,7 +8,7 @@
     "dev": "pnpm -r --parallel --filter=./packages/* run dev",
     "build": "pnpm -r --filter=./packages/* run build",
     "test": "pnpm -r --filter=./packages/* run test",
-    "lint": "eslint --ext .js,.ts,.vue . --fix",
+    "lint": "eslint --ext .js,.ts,.tsx,.vue . --fix",
     "example:vue": "pnpm --filter=vue-examples run dev"
   },
   "keywords": [
@@ -16,6 +16,7 @@
     "chinese",
     "virtual-keyboard",
     "vue",
+    "react",
     "component",
     "键盘",
     "中文",
@@ -35,6 +36,9 @@
     "@types/node": "18"
   },
   "dependencies": {
-    "dexie": "^4.0.11"
+    "@eslint-react/eslint-plugin": "^1.50.0",
+    "dexie": "^4.0.11",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19"
   }
 }
