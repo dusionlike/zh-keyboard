@@ -1,3 +1,4 @@
+export * from './advanced-pinyin'
 export * from './canvas'
 export * from './dom'
 export * from './handwriting'
