@@ -4,6 +4,18 @@
   "version": "0.1.0",
   "description": "基于Vue的中文虚拟键盘组件",
   "author": "dusionlike",
+  "keywords": [
+    "keyboard",
+    "chinese",
+    "virtual-keyboard",
+    "vue",
+    "component",
+    "键盘",
+    "中文",
+    "虚拟键盘",
+    "拼音",
+    "手写"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

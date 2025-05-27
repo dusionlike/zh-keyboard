@@ -1,5 +1,5 @@
 import { onMounted, onUnmounted, ref } from 'vue'
-import { getHandwritingRecognizer } from '../lib'
+import { getHandwritingRecognizer } from '../utils/handwriting'
 
 export function useHandwritingRecognizer(enableHandwriting = false) {
   // 是否初始化了手写识别服务
