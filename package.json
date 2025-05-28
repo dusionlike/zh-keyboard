@@ -9,7 +9,7 @@
     "build": "pnpm -r --filter=./packages/* run build",
     "test": "pnpm -r --filter=./packages/* run test",
     "lint": "eslint --ext .js,.ts,.tsx,.vue . --fix",
-    "example:vue": "pnpm --filter=vue-examples run dev"
+    "examples:build": "pnpm run build && cd examples && pnpm run build"
   },
   "keywords": [
     "keyboard",
