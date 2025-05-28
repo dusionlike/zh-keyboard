@@ -1,9 +1,17 @@
 {
   "name": "@zh-keyboard/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "中文虚拟键盘组件库核心包",
   "author": "dusionlike",
   "license": "Apache 2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dusionlike/zh-keyboard",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/dusionlike/zh-keyboard/issues"
+  },
   "keywords": [
     "keyboard",
     "chinese",

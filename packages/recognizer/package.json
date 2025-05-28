@@ -1,9 +1,17 @@
 {
   "name": "@zh-keyboard/recognizer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "中文手写汉字识别器组件",
   "author": "dusionlike",
   "license": "Apache 2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dusionlike/zh-keyboard",
+    "directory": "packages/recognizer"
+  },
+  "bugs": {
+    "url": "https://github.com/dusionlike/zh-keyboard/issues"
+  },
   "keywords": [
     "键盘",
     "中文",
