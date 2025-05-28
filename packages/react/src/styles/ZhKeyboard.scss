@@ -19,7 +19,7 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
 
   position: relative;
   width: 400px;
-  min-width: min(calc(var(--keyboard-height) + 100px), 100%);
+  min-width: calc(var(--keyboard-height) + 100px);
   max-width: 1080px;
   height: 300px;
   min-height: 300px;
@@ -35,7 +35,7 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
   }
 
   &--floating {
-    position: absolute;
+    position: fixed;
     z-index: 9999;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
@@ -45,6 +45,7 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
     bottom: 0;
     left: 0;
     width: 100%;
+    min-width: min(calc(var(--keyboard-height) + 100px), 100%);
     max-width: 100%;
     z-index: 9999;
     border-radius: $border-radius $border-radius 0 0;

@@ -1,8 +1,9 @@
+import type { KeyboardPosition } from '@zh-keyboard/core'
 import type { KeyBoardMode, KeyEvent } from '../types'
 import { useActiveElement, useElementSize, useEventListener } from '@reactuses/core'
 import { calculateKeyboardPosition, delToInputElement, isInputElement, writeToInputElement } from '@zh-keyboard/core'
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useHandwritingRecognizer } from '../utils/useHandwritingRecognizer'
 import HandwritingInput from './HandwritingInput'
@@ -32,14 +33,11 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
 }) => {
   const [mode, setMode] = useState<KeyBoardMode>(defaultMode)
   const previousModeRef = useRef<KeyBoardMode>(defaultMode)
-  const [keyboardPosition, setKeyboardPosition] = useState<{ top: number, left: number } | null>(null)
+  const [keyboardPosition, setKeyboardPosition] = useState<KeyboardPosition | null>(null)
   const keyboardRef = useRef<HTMLDivElement>(null)
   const activeElement = useActiveElement<HTMLInputElement>()
 
   const [_, keyboardHeight] = useElementSize(keyboardRef)
-  const keyboardHeightpX = useMemo(() => {
-    return keyboardHeight ? `${keyboardHeight}px` : '300px'
-  }, [keyboardHeight])
 
   const { recognizerInitialized } = useHandwritingRecognizer(enableHandwriting)
 
@@ -47,46 +45,47 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
     previousModeRef.current = mode
   }, [mode])
 
+  const [isPositioned, setIsPositioned] = useState(false)
+
   const updateKeyboardPosition = useCallback(() => {
-    if (!keyboardRef.current || !activeElement || position === 'static' || !isInputElement(activeElement))
-      return
-    const newPosition = calculateKeyboardPosition(
-      activeElement,
-      keyboardRef.current,
-      position as 'static' | 'float' | 'bottom',
-    )
-    if (newPosition) {
+    if (keyboardHeight) {
+      const newPosition = calculateKeyboardPosition(
+        activeElement,
+        keyboardRef.current,
+        position,
+      )
       setKeyboardPosition(newPosition)
     }
-  }, [activeElement, position])
+
+    setTimeout(() => {
+      setIsPositioned(true)
+    }, 0)
+  }, [activeElement, position, keyboardHeight])
 
   const showKeyboard = useMemo(() => {
-    return position === 'static' || !!(activeElement && isInputElement(activeElement))
+    return position === 'static' || isInputElement(activeElement)
   }, [activeElement, position])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (showKeyboard) {
-      ;(async () => {
-        updateKeyboardPosition()
-      })()
+      setIsPositioned(false)
+      updateKeyboardPosition()
     }
   }, [showKeyboard, updateKeyboardPosition])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (activeElement && isInputElement(activeElement)) {
       const inputmode = activeElement.dataset.inputmode as KeyBoardMode | undefined
-      ;(async () => {
-        setMode((prevMode) => {
-          return inputmode || prevMode
-        })
-      })()
+      setMode((prevMode) => {
+        return inputmode || prevMode
+      })
     }
   }, [activeElement])
 
   const isKeyboardDisabled = useMemo(() => {
     if (disableWhenNoFocus === false)
       return false
-    return !activeElement || !isInputElement(activeElement)
+    return !isInputElement(activeElement)
   }, [disableWhenNoFocus, activeElement])
 
   useEventListener('scroll', updateKeyboardPosition, window, { passive: true })
@@ -96,7 +95,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
     if (payload.isControl) {
       switch (payload.key) {
         case 'delete':
-          if (activeElement && isInputElement(activeElement))
+          if (isInputElement(activeElement))
             delToInputElement(activeElement)
           break
         default:
@@ -124,12 +123,11 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
         'zhk--disabled': isKeyboardDisabled,
       }, className)}
       style={{
-        '--keyboard-height': keyboardHeightpX,
-        ...position !== 'static' && keyboardPosition
-          ? { top: `${keyboardPosition.top}px`, left: `${keyboardPosition.left}px` }
-          : {},
+        '--keyboard-height': `${keyboardHeight}px`,
+        ...keyboardPosition,
         ...style,
         'display': !showKeyboard ? 'none' : undefined,
+        'opacity': isPositioned ? 1 : 0,
       } as React.CSSProperties}
       onMouseDown={e => e.preventDefault()}
     >
