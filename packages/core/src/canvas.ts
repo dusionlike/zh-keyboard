@@ -30,6 +30,7 @@ export class CanvasDrawer {
     this.ctx.lineCap = 'round'
     this.ctx.lineWidth = 3
     this.ctx.strokeStyle = '#000'
+    this.clearCanvas()
     this.drawGrid()
   }
 
