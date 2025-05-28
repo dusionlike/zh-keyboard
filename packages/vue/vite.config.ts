@@ -25,9 +25,10 @@ export default defineConfig((env) => {
           entry: resolve(__dirname, 'src/lib.ts'),
           name: 'ZhKeyboardVue',
           fileName: 'zh-keyboard-vue',
-          cssFileName: 'index',
+          cssFileName: 'style',
         },
         sourcemap: true,
+        copyPublicDir: false,
         rollupOptions: {
           external: ['vue'],
           output: {
