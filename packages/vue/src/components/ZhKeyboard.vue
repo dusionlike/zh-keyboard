@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { KeyboardPosition } from '@zh-keyboard/core'
 import type { KeyBoardMode, KeyEvent } from '../types'
 import { useActiveElement, useElementSize, useEventListener } from '@vueuse/core'
 import { calculateKeyboardPosition, delToInputElement, isInputElement, writeToInputElement } from '@zh-keyboard/core'
@@ -10,7 +11,7 @@ import NumericKeyboard from './NumericKeyboard.vue'
 import SymbolKeyboard from './SymbolKeyboard.vue'
 import '../styles/ZhKeyboard.scss'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   /**
    * 默认的键盘模式
    */
@@ -29,7 +30,12 @@ const props = defineProps<{
    * @default true
    */
   disableWhenNoFocus?: boolean
-}>()
+}>(), {
+  defaultMode: 'en',
+  enableHandwriting: false,
+  position: 'static',
+  disableWhenNoFocus: true,
+})
 
 const emit = defineEmits<{
   (e: 'key', payload: KeyEvent): void
@@ -40,8 +46,7 @@ const previousMode = ref<KeyBoardMode>(props.defaultMode || 'en')
 
 const candidates = ref<string[]>([])
 const isSelectionOpen = ref(false)
-const showKeyboard = ref(props.position === 'static')
-const keyboardPosition = ref<{ top: number, left: number } | null>(null)
+const keyboardPosition = ref<KeyboardPosition | null>(null)
 const keyboardRef = ref<HTMLElement | null>(null)
 
 // 使用手写识别服务，自动处理生命周期
@@ -63,6 +68,12 @@ const inputElement = computed(() => {
   return null
 })
 
+const showKeyboard = computed(() => {
+  return props.position === 'static' || !!(activeElement.value && isInputElement(activeElement.value))
+})
+
+const { height: keyboardHeight } = useElementSize(keyboardRef)
+
 // 监听 inputElement 的变化
 watchEffect(() => {
   if (inputElement.value) {
@@ -70,15 +81,14 @@ watchEffect(() => {
     if (inputmode) {
       mode.value = inputmode
     }
+  }
+})
 
-    if (props.position !== 'static') {
-      showKeyboard.value = true
-      nextTick(() => {
-        updateKeyboardPosition()
-      })
-    }
-  } else if (props.position !== 'static') {
-    showKeyboard.value = false
+watch([showKeyboard, keyboardHeight, inputElement], () => {
+  if (showKeyboard.value && keyboardHeight.value) {
+    nextTick(() => {
+      updateKeyboardPosition()
+    })
   }
 })
 
@@ -92,16 +102,14 @@ const isKeyboardDisabled = computed(() => {
 
 // 计算键盘位置
 function updateKeyboardPosition() {
-  if (!keyboardRef.value || !inputElement.value)
+  if (!keyboardHeight.value)
     return
   const newPosition = calculateKeyboardPosition(
     inputElement.value,
     keyboardRef.value,
-    props.position as 'static' | 'float' | 'bottom',
+    props.position,
   )
-  if (newPosition) {
-    keyboardPosition.value = newPosition
-  }
+  keyboardPosition.value = newPosition
 }
 
 // 页面滚动或窗口大小变化时更新键盘位置
@@ -138,29 +146,12 @@ function goBack() {
 function handleRecognize(results: string[]) {
   candidates.value = results
 }
-
-const { height: rawKeyboardHeight } = useElementSize(keyboardRef, { width: 400, height: 300 })
-const keyboardHeight = computed(() => `${rawKeyboardHeight.value}px`)
-
-const rootStyle = computed(() => {
-  const positionStyle = props.position !== 'static' && keyboardPosition.value
-    ? {
-        top: `${keyboardPosition.value.top}px`,
-        left: `${keyboardPosition.value.left}px`,
-      }
-    : {}
-
-  return {
-    '--keyboard-height': keyboardHeight.value,
-    ...positionStyle,
-  }
-})
 </script>
 
 <template>
   <Teleport to="body" :disabled="position === 'static'">
     <div
-      v-show="position === 'static' ? true : (showKeyboard && !isKeyboardDisabled)"
+      v-show="showKeyboard"
       v-bind="$attrs"
       ref="keyboardRef"
       class="zhk"
@@ -169,10 +160,13 @@ const rootStyle = computed(() => {
         'zhk--bottom': position === 'bottom',
         'zhk--disabled': isKeyboardDisabled,
       }"
-      :style="rootStyle"
+      :style="{
+        '--keyboard-height': `${keyboardHeight}px`,
+        ...keyboardPosition,
+      }"
       @mousedown.prevent
     >
-      <div v-if="isKeyboardDisabled" class="zhk__disabled-overlay">
+      <div v-if="isKeyboardDisabled || !showKeyboard || !keyboardHeight" class="zhk__disabled-overlay">
         <span>请选择输入框以启用键盘</span>
       </div>
       <template v-else>

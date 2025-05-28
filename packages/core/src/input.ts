@@ -1,16 +1,19 @@
 /**
  * 判断元素是否为可输入元素（支持文本输入的 input 或 textarea）
- * @param element 要检测的元素
+ * @param el 要检测的元素
  * @returns 如果是可输入元素则返回 true
  */
-export function isInputElement(element: Element) {
-  if (element.tagName === 'TEXTAREA') {
+export function isInputElement(el?: Element | null): el is HTMLInputElement {
+  if (!el) {
+    return false
+  }
+  if (el.tagName === 'TEXTAREA') {
     return true
   }
 
-  if (element.tagName === 'INPUT') {
+  if (el.tagName === 'INPUT') {
     // 获取输入框类型
-    const inputElement = element as HTMLInputElement
+    const inputElement = el as HTMLInputElement
     const inputType = (inputElement.type || 'text').toLowerCase()
 
     // 这些类型的input不支持文本输入
