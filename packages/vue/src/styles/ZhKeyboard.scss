@@ -18,9 +18,8 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
   --key-icon-size: calc(var(--key-font-size) * 1.2);
 
   position: relative;
-  width: 100%;
   width: 400px;
-  min-width: calc(var(--keyboard-height) + 100px);
+  min-width: min(calc(var(--keyboard-height) + 100px), 100%);
   max-width: 1080px;
   height: 300px;
   min-height: 300px;
