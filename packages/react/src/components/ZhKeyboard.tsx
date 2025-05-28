@@ -1,6 +1,7 @@
 import type { KeyBoardMode, KeyEvent } from '../types'
 import { useActiveElement, useElementSize, useEventListener } from '@reactuses/core'
 import { calculateKeyboardPosition, delToInputElement, isInputElement, writeToInputElement } from '@zh-keyboard/core'
+import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useHandwritingRecognizer } from '../utils/useHandwritingRecognizer'
@@ -16,14 +17,18 @@ interface ZhKeyboardProps {
   position?: 'static' | 'float' | 'bottom'
   disableWhenNoFocus?: boolean
   onKey?: (payload: KeyEvent) => void
+  className?: string
+  style?: React.CSSProperties
 }
 
-const ZhKeyboard: React.FC<ZhKeyboardProps> = ({
+const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
   defaultMode = 'en',
   enableHandwriting = false,
   position = 'static',
   disableWhenNoFocus = true,
   onKey,
+  className,
+  style,
 }) => {
   const [mode, setMode] = useState<KeyBoardMode>(defaultMode)
   const previousModeRef = useRef<KeyBoardMode>(defaultMode)
@@ -31,10 +36,10 @@ const ZhKeyboard: React.FC<ZhKeyboardProps> = ({
   const keyboardRef = useRef<HTMLDivElement>(null)
   const activeElement = useActiveElement<HTMLInputElement>()
 
-  const [_, rootHeight] = useElementSize(keyboardRef)
-  const keyboardHeight = useMemo(() => {
-    return rootHeight ? `${rootHeight}px` : '300px'
-  }, [rootHeight])
+  const [_, keyboardHeight] = useElementSize(keyboardRef)
+  const keyboardHeightpX = useMemo(() => {
+    return keyboardHeight ? `${keyboardHeight}px` : '300px'
+  }, [keyboardHeight])
 
   const { recognizerInitialized } = useHandwritingRecognizer(enableHandwriting)
 
@@ -110,25 +115,27 @@ const ZhKeyboard: React.FC<ZhKeyboardProps> = ({
     setMode(previousModeRef.current)
   }, [])
 
-  const keyboardContent = (
+  return (
     <div
       ref={keyboardRef}
-      className={`zhk ${position === 'float' ? 'zhk--floating' : ''
-      } ${position === 'bottom' ? 'zhk--bottom' : ''
-      } ${isKeyboardDisabled ? 'zhk--disabled' : ''
-      }`}
+      className={classNames('zhk', {
+        'zhk--floating': position === 'float',
+        'zhk--bottom': position === 'bottom',
+        'zhk--disabled': isKeyboardDisabled,
+      }, className)}
       style={{
-        '--keyboard-height': keyboardHeight,
+        '--keyboard-height': keyboardHeightpX,
         ...position !== 'static' && keyboardPosition
           ? { top: `${keyboardPosition.top}px`, left: `${keyboardPosition.left}px` }
           : {},
-        'display': (!showKeyboard || isKeyboardDisabled) ? 'none' : undefined,
+        ...style,
+        'display': !showKeyboard ? 'none' : undefined,
       } as React.CSSProperties}
       onMouseDown={e => e.preventDefault()}
     >
-      {isKeyboardDisabled
+      {isKeyboardDisabled || !showKeyboard || !keyboardHeight
         ? (
-            <div className="zhk__disabled-overlay">
+            <div className={classNames('zhk__disabled-overlay')}>
               <span>请选择输入框以启用键盘</span>
             </div>
           )
@@ -150,7 +157,12 @@ const ZhKeyboard: React.FC<ZhKeyboardProps> = ({
           )}
     </div>
   )
+}
 
+const ZhKeyboard: React.FC<ZhKeyboardProps> = (props) => {
+  const { position = 'static' } = props
+
+  const keyboardContent = <ZHKeyboardContent {...props} />
   return position === 'static' ? keyboardContent : ReactDOM.createPortal(keyboardContent, document.body)
 }
 

@@ -137,16 +137,14 @@ function App() {
       </div>
 
       <div className="keyboard-wrapper">
-        <div style={position === 'bottom'
-          ? { width: '100%', height: 'auto' }
-          : { width: `${keyboardWidth}px`, height: `${keyboardHeight}px` }}
-        >
-          <ZhKeyboard
-            position={position}
-            enableHandwriting
-            disableWhenNoFocus={disableWhenNoFocus}
-          />
-        </div>
+        <ZhKeyboard
+          position={position}
+          enableHandwriting
+          disableWhenNoFocus={disableWhenNoFocus}
+          style={position === 'bottom'
+            ? { width: '100%', height: 'auto' }
+            : { width: `${keyboardWidth}px`, height: `${keyboardHeight}px` }}
+        />
       </div>
     </div>
   )
