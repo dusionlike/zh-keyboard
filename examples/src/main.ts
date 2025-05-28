@@ -4,8 +4,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 registerHandwritingRecognizer(new ZhkRecognizer({
-  modelPath: '/models/handwrite/model.json',
-  dictPath: '/models/dict.txt',
+  modelPath: new URL('/models/handwrite/model.json', import.meta.url).href,
+  dictPath: new URL('/models/dict.txt', import.meta.url).href,
 }))
 
 createApp(App).mount('#app')
