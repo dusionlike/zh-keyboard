@@ -17,16 +17,16 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasDrawer = useRef<CanvasDrawer | null>(null)
-  const [isRecognizing, setIsRecognizing] = useState(false)
+  const isRecognizing = useRef(false)
   const [candidates, setCandidates] = useState<string[]>([])
 
   const recognizeStroke = useCallback(async () => {
-    if (!canvasDrawer.current || canvasDrawer.current.getStrokeData().length === 0 || isRecognizing)
+    if (!canvasDrawer.current || canvasDrawer.current.getStrokeData().length === 0 || isRecognizing.current)
       return
 
     const recognizer = getHandwritingRecognizer()
     if (recognizer) {
-      setIsRecognizing(true)
+      isRecognizing.current = true
       try {
         const strokeData = [...canvasDrawer.current.getStrokeData()]
         const results = await recognizer.recognize(strokeData)
@@ -34,12 +34,12 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
       } catch (error) {
         console.error('识别笔迹失败:', error)
       } finally {
-        setIsRecognizing(false)
+        isRecognizing.current = false
       }
     } else {
       console.warn('手写识别服务不可用')
     }
-  }, [isRecognizing])
+  }, [])
 
   const setupCanvas = useCallback(() => {
     if (!canvasRef.current)
@@ -49,22 +49,23 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
       canvasDrawer.current.destroy()
     }
 
-    const newCanvasDrawer = new CanvasDrawer(canvasRef.current, {
+    canvasDrawer.current = new CanvasDrawer(canvasRef.current, {
       onDrawEnd: recognizeStroke,
     })
-    canvasDrawer.current = newCanvasDrawer
   }, [recognizeStroke])
 
   const [_, canvasSize] = useElementSize(containerRef)
 
   useEffect(() => {
-    setupCanvas()
-    return () => {
-      if (canvasDrawer.current) {
-        canvasDrawer.current.destroy()
+    if (canvasSize) {
+      setupCanvas()
+      return () => {
+        if (canvasDrawer.current) {
+          canvasDrawer.current.destroy()
+        }
       }
     }
-  }, [setupCanvas])
+  }, [canvasSize, setupCanvas])
 
   function clearCanvas() {
     if (!canvasDrawer.current)
