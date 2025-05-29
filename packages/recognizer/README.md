@@ -34,12 +34,14 @@ pnpm add @zh-keyboard/recognizer
 
 ```typescript
 import { ZhkRecognizer } from '@zh-keyboard/recognizer'
+// 如果需要使用WebGL后端，需要手动引入
+import '@tensorflow/tfjs-backend-webgl'
 
 // 创建识别器实例
 const recognizer = new ZhkRecognizer({
   modelPath: '/models/handwrite/model.json', // TensorFlow.js模型路径
   dictPath: '/models/dict.txt', // 汉字字典路径
-  backend: 'webgl' // 可选：'webgl'或'cpu'，默认为'webgl'
+  backend: 'webgl' // 可选：'webgl'或'cpu'，默认为'cpu'
 })
 
 // 初始化识别器（加载模型和字典）
@@ -68,5 +70,6 @@ await recognizer.close()
 ## 性能优化
 
 - 在支持WebGL的设备上使用'webgl'后端可以显著提高识别速度
+- **注意：使用WebGL后端时，需要手动引入 `import '@tensorflow/tfjs-backend-webgl'`**
 - 初始化时会自动进行模型预热，减少首次识别的延迟
 - 如果在移动设备上使用，建议使用较小的模型以提高响应速度
