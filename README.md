@@ -4,7 +4,16 @@
 
 一个现代化的中文虚拟键盘组件库，支持拼音输入法和手写输入，为Web应用提供流畅的中文输入体验。支持多种前端框架，目前已实现Vue和React组件。
 
-## 功能特点
+## 📦 项目结构
+
+| 包名 | 版本 | 描述 |
+| --- | --- | --- |
+| [@zh-keyboard/vue](packages/vue) | [![npm](https://img.shields.io/npm/v/@zh-keyboard/vue.svg)](https://www.npmjs.com/package/@zh-keyboard/vue) | Vue 组件库 |
+| [@zh-keyboard/react](packages/react) | [![npm](https://img.shields.io/npm/v/@zh-keyboard/react.svg)](https://www.npmjs.com/package/@zh-keyboard/react) | React 组件库 |
+| [@zh-keyboard/core](packages/core) | [![npm](https://img.shields.io/npm/v/@zh-keyboard/core.svg)](https://www.npmjs.com/package/@zh-keyboard/core) | 核心功能包 |
+| [@zh-keyboard/recognizer](packages/recognizer) | [![npm](https://img.shields.io/npm/v/@zh-keyboard/recognizer.svg)](https://www.npmjs.com/package/@zh-keyboard/recognizer) | 手写识别器 |
+
+## ✨ 功能特点
 
 - 🔌 即插即用，自动绑定输入框
 - ✨ 支持拼音输入，带候选词选择功能
@@ -14,14 +23,14 @@
 - 🌐 纯前端实现，可作为静态网页部署，无需服务端支持
 - 🔌 支持Vue和React框架，可在不同前端项目中使用
 
-## 未来计划
+## 🚀 未来计划
 
 | 序号 | 功能 | 状态 |
 | --- | --- | --- |
 | 1 | 拼音输入分词功能 | 📅 |
 | 2 | React框架支持 | ✅ |
 
-## 快速开始
+## 🔧 快速开始
 
 这里提供简要的安装和使用指引，更详细的使用方法请参阅各组件的文档。
 
@@ -43,7 +52,7 @@ npm install @zh-keyboard/react
 
 详细使用方法请参阅 [React组件文档](packages/react/README.md)。
 
-## 组件和模块
+## 🧩 组件和模块
 
 zh-keyboard 项目由以下几个主要组件和模块组成：
 
