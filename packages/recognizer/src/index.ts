@@ -2,7 +2,7 @@ import type { GraphModel, Tensor } from '@tensorflow/tfjs'
 import type { HandwritingRecognizer, RecognizerInitOptions } from '@zh-keyboard/core'
 import { loadGraphModel } from '@tensorflow/tfjs-converter'
 import * as tf from '@tensorflow/tfjs-core'
-import '@tensorflow/tfjs-backend-webgl'
+import '@tensorflow/tfjs-backend-cpu'
 
 export interface RecognizerOptions {
   /**
@@ -31,7 +31,7 @@ export class ZhkRecognizer implements HandwritingRecognizer {
   constructor(options: RecognizerOptions) {
     this.modelPath = options.modelPath
     this.dictPath = options.dictPath
-    this.backend = options.backend || 'webgl'
+    this.backend = options.backend || 'cpu'
     this.canvas = document.createElement('canvas')
     this.canvas.width = this.canvas.height = 64
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!
