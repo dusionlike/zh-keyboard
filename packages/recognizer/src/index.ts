@@ -1,5 +1,5 @@
 import type { GraphModel, Tensor } from '@tensorflow/tfjs'
-import type { HandwritingRecognizer } from '@zh-keyboard/core'
+import type { HandwritingRecognizer, RecognizerInitOptions } from '@zh-keyboard/core'
 import { loadGraphModel } from '@tensorflow/tfjs-converter'
 import * as tf from '@tensorflow/tfjs-core'
 import '@tensorflow/tfjs-backend-webgl'
@@ -37,10 +37,13 @@ export class ZhkRecognizer implements HandwritingRecognizer {
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!
   }
 
-  async initialize() {
+  async initialize(options?: RecognizerInitOptions) {
     const text = await fetch(this.dictPath).then(r => r.text())
     this.dict = text.split('\n')
-    this.model = await loadGraphModel(this.modelPath)
+    this.model = await loadGraphModel(this.modelPath, {
+      streamWeights: true,
+      onProgress: options?.onProgress,
+    })
     // 如果后端为webgl，则需要进行预热
     if (this.backend === 'webgl') {
       await tf.setBackend('webgl')
@@ -115,14 +118,13 @@ export class ZhkRecognizer implements HandwritingRecognizer {
 
     return tf.tidy(() => {
       const image = tf.browser.fromPixels(canvas, 3)
-        .toFloat()
-        .div(255)
-        .expandDims()
+      const floatImage = tf.cast(image, 'float32')
+      const normalizedImage = tf.div(floatImage, 255)
+      const batchedImage = tf.expandDims(normalizedImage, 0)
 
-      const probs = (model!.predict(image) as Tensor).dataSync()
+      const probs = (model!.predict(batchedImage) as Tensor).dataSync()
       const idxs = Array.from(probs.keys()).sort((a, b) => probs[b] - probs[a]).slice(0, 10)
 
-      tf.dispose(image)
       return idxs.map(i => (i < dict.length ? dict[i] : '')).filter(Boolean)
     })
   }

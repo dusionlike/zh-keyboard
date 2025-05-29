@@ -39,7 +39,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
 
   const [_, keyboardHeight] = useElementSize(keyboardRef)
 
-  const { recognizerInitialized } = useHandwritingRecognizer(enableHandwriting)
+  const { recognizerInitialized, recognizerProgress } = useHandwritingRecognizer(enableHandwriting)
 
   useEffect(() => {
     previousModeRef.current = mode
@@ -139,14 +139,20 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
           )
         : (
             <>
-              {mode === 'hand' && <HandwritingInput onKey={handleKeyEvent} onExit={goBack} />}
+              {mode === 'hand' && (
+                <HandwritingInput
+                  recognizerInitialized={recognizerInitialized}
+                  recognizerProgress={recognizerProgress}
+                  onKey={handleKeyEvent}
+                  onExit={goBack}
+                />
+              )}
               {mode === 'num' && <NumericKeyboard onKey={handleKeyEvent} onExit={goBack} />}
               {mode === 'symbol' && <SymbolKeyboard onKey={handleKeyEvent} onExit={goBack} />}
               {(mode === 'en' || mode === 'zh') && (
                 <KeyboardBase
                   mode={mode}
                   setMode={setMode}
-                  recognizerInitialized={recognizerInitialized}
                   enableHandwriting={enableHandwriting}
                   onKey={handleKeyEvent}
                 />

@@ -1,3 +1,12 @@
+export interface RecognizerInitOptions {
+  /**
+   * 初始化进度回调函数
+   * @param progress 进度范围为0到1，表示初始化的完成度
+   * @returns void
+   */
+  onProgress?: (progress: number) => void
+}
+
 /**
  * 手写识别器接口
  * 用于实现手写汉字识别功能
@@ -7,7 +16,7 @@ export interface HandwritingRecognizer {
    * 初始化手写识别服务
    * @returns 返回是否初始化成功
    */
-  initialize(): Promise<boolean>
+  initialize(options?: RecognizerInitOptions): Promise<boolean>
 
   /**
    * 识别手写笔迹

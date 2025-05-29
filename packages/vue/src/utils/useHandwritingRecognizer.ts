@@ -4,6 +4,8 @@ import { getHandwritingRecognizer } from '../utils/handwriting'
 export function useHandwritingRecognizer(enableHandwriting = false) {
   // 是否初始化了手写识别服务
   const recognizerInitialized = ref(false)
+  // 初始化进度
+  const recognizerProgress = ref(0)
 
   /**
    * 初始化手写识别服务
@@ -12,7 +14,11 @@ export function useHandwritingRecognizer(enableHandwriting = false) {
     const recognizer = getHandwritingRecognizer()
     if (recognizer) {
       try {
-        recognizerInitialized.value = await recognizer.initialize()
+        recognizerInitialized.value = await recognizer.initialize({
+          onProgress: (progress) => {
+            recognizerProgress.value = progress
+          },
+        })
       } catch (error) {
         console.error('初始化手写识别服务失败:', error)
         recognizerInitialized.value = false
@@ -38,7 +44,6 @@ export function useHandwritingRecognizer(enableHandwriting = false) {
     }
   }
 
-  // 封装生命周期钩子
   onMounted(() => {
     if (enableHandwriting) {
       initializeRecognizer()
@@ -51,5 +56,6 @@ export function useHandwritingRecognizer(enableHandwriting = false) {
 
   return {
     recognizerInitialized,
+    recognizerProgress,
   }
 }

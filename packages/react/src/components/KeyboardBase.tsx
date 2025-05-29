@@ -8,14 +8,13 @@ import CandidateBar from './CandidateBar'
 import '../styles/KeyboardBase.scss'
 
 interface KeyboardBaseProps {
-  recognizerInitialized?: boolean
   enableHandwriting?: boolean
   mode: KeyBoardMode
   onKey: (payload: KeyEvent) => void
   setMode: (mode: KeyBoardMode) => void
 }
 
-const KeyboardBase: React.FC<KeyboardBaseProps> = ({ recognizerInitialized, enableHandwriting, mode, onKey, setMode }) => {
+const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, onKey, setMode }) => {
   const [isUpperCase, setIsUpperCase] = useState(false)
   const [pinyin, setPinyin] = useState('')
 
@@ -73,14 +72,12 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ recognizerInitialized, enab
   const handwritingButtonText = useMemo(() => {
     if (!enableHandwriting)
       return '-'
-    if (!recognizerInitialized)
-      return '...'
     return '手写'
-  }, [enableHandwriting, recognizerInitialized])
+  }, [enableHandwriting])
 
   const isHandwritingButtonDisabled = useMemo(() => {
-    return !enableHandwriting || !recognizerInitialized
-  }, [enableHandwriting, recognizerInitialized])
+    return !enableHandwriting
+  }, [enableHandwriting])
 
   return (
     <div className="zhk-base">

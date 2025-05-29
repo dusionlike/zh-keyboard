@@ -2,10 +2,15 @@
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@vueuse/core'
 import { CanvasDrawer } from '@zh-keyboard/core'
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onUnmounted, ref, watchEffect } from 'vue'
 import { getHandwritingRecognizer } from '../utils/handwriting'
 import CandidateList from './CandidateList.vue'
 import '../styles/HandwritingInput.scss'
+
+const props = defineProps<{
+  recognizerInitialized: boolean
+  recognizerProgress: number
+}>()
 
 const emit = defineEmits<{
   (e: 'key', payload: KeyEvent): void
@@ -75,18 +80,12 @@ onUnmounted(() => {
   }
 })
 
-// 监听canvasSize变化，在尺寸变化时重新设置画布
-watch(canvasSize, () => {
-  if (canvasRef.value) {
+watchEffect(() => {
+  if (canvasRef.value && canvasSize.value && props.recognizerInitialized) {
     nextTick(() => {
       setupCanvas()
     })
   }
-})
-
-// 挂载时设置画布和初始化识别器
-onMounted(() => {
-  setupCanvas()
 })
 
 function handleSelection(candidate: string) {
@@ -112,13 +111,30 @@ function handleSelection(candidate: string) {
         </button>
         <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '！' })">
           ！
-        </button>
-        <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '、' })">
+        </button> <button class="handwriting-btn handwriting-btn--function" @click="emit('key', { key: '、' })">
           、
         </button>
       </div>
       <div class="handwriting-canvas-container">
+        <!-- 进度条显示 -->
+        <div
+          v-if="!recognizerInitialized"
+          class="handwriting-loading"
+          :style="{ width: `${canvasSize}px`, height: `${canvasSize}px` }"
+        >
+          <div class="loading-text">
+            正在加载手写识别...
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: `${recognizerProgress * 100}%` }"></div>
+          </div>
+          <div class="progress-text">
+            {{ Math.round(recognizerProgress * 100) }}%
+          </div>
+        </div>
+        <!-- 画布显示 -->
         <canvas
+          v-else
           ref="canvasRef"
           class="handwriting-canvas"
           :width="canvasSize"
