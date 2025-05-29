@@ -1,7 +1,7 @@
 {
   "name": "@zh-keyboard/react",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "基于React的中文虚拟键盘组件",
   "author": "dusionlike",
   "license": "Apache 2.0",
