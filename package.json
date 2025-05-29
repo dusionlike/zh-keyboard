@@ -1,6 +1,6 @@
 {
   "name": "@zh-keyboard/zh-keyboard-monorepo",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "中文虚拟键盘组件库",
   "type": "module",
   "private": true,
