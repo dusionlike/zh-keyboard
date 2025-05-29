@@ -3,13 +3,18 @@ import { getHandwritingRecognizer } from './handwriting'
 
 export function useHandwritingRecognizer(enableHandwriting = false) {
   const [recognizerInitialized, setRecognizerInitialized] = useState(false)
+  const [recognizerProgress, setRecognizerProgress] = useState(0)
 
   useEffect(() => {
     async function initializeRecognizer() {
       const recognizer = getHandwritingRecognizer()
       if (recognizer) {
         try {
-          setRecognizerInitialized(await recognizer.initialize())
+          setRecognizerInitialized(await recognizer.initialize({
+            onProgress: (progress) => {
+              setRecognizerProgress(progress)
+            },
+          }))
         } catch (error) {
           console.error('初始化手写识别服务失败:', error)
           setRecognizerInitialized(false)
@@ -43,5 +48,6 @@ export function useHandwritingRecognizer(enableHandwriting = false) {
 
   return {
     recognizerInitialized,
+    recognizerProgress,
   }
 }

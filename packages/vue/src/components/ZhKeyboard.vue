@@ -49,8 +49,7 @@ const isSelectionOpen = ref(false)
 const keyboardPosition = ref<KeyboardPosition | null>(null)
 const keyboardRef = ref<HTMLElement | null>(null)
 
-// 使用手写识别服务，自动处理生命周期
-const { recognizerInitialized } = useHandwritingRecognizer(props.enableHandwriting)
+const { recognizerInitialized, recognizerProgress } = useHandwritingRecognizer(props.enableHandwriting)
 
 // 监听mode变化，保存上一次的值
 watch(mode, (newMode, oldMode) => {
@@ -172,7 +171,10 @@ function handleRecognize(results: string[]) {
       <template v-else>
         <HandwritingInput
           v-if="mode === 'hand'"
-          @key="handleKeyEvent" @exit="goBack"
+          :recognizer-initialized
+          :recognizer-progress
+          @key="handleKeyEvent"
+          @exit="goBack"
           @recognize="handleRecognize"
         />
         <NumericKeyboard
@@ -188,7 +190,6 @@ function handleRecognize(results: string[]) {
         <KeyboardBase
           v-else-if="mode === 'en' || mode === 'zh'"
           v-model="mode"
-          :recognizer-initialized="recognizerInitialized"
           :enable-handwriting="enableHandwriting"
           @key="handleKeyEvent"
         />

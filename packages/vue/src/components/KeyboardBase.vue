@@ -5,7 +5,6 @@ import CandidateBar from './CandidateBar.vue'
 import '../styles/KeyboardBase.scss'
 
 const props = defineProps<{
-  recognizerInitialized?: boolean
   enableHandwriting?: boolean
 }>()
 
@@ -87,15 +86,12 @@ const handwritingButtonText = computed(() => {
   if (!props.enableHandwriting) {
     return '-'
   }
-  if (!props.recognizerInitialized) {
-    return '...'
-  }
   return '手写'
 })
 
 // 计算手写按钮是否可点击
 const isHandwritingButtonDisabled = computed(() => {
-  return !props.enableHandwriting || !props.recognizerInitialized
+  return !props.enableHandwriting
 })
 </script>
 

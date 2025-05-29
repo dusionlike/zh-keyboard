@@ -17,10 +17,49 @@
     overflow: hidden;
     gap: var(--gap);
   }
-
   .handwriting-canvas-container {
     background: white;
     font-size: 0;
+
+    .handwriting-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: calc(var(--gap) * 2);
+      box-sizing: border-box;
+
+      .loading-text {
+        font-size: 16px;
+        color: var(--text-color, #333);
+        margin-bottom: calc(var(--gap) * 2);
+        text-align: center;
+      }
+
+      .progress-bar {
+        width: 80%;
+        height: 8px;
+        background-color: var(--border-color, #dcdcdc);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: var(--gap);
+
+        .progress-fill {
+          height: 100%;
+          background-color: var(--primary-color, #007bff);
+          border-radius: 4px;
+          transition: width 0.3s ease;
+        }
+      }
+
+      .progress-text {
+        font-size: 14px;
+        color: var(--text-color, #666);
+        font-weight: 500;
+      }
+    }
   }
 
   .handwriting-canvas {

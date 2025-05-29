@@ -1,7 +1,7 @@
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@reactuses/core'
 import { CanvasDrawer } from '@zh-keyboard/core'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
 import { getHandwritingRecognizer } from '../utils/handwriting'
@@ -9,11 +9,13 @@ import CandidateList from './CandidateList'
 import '../styles/HandwritingInput.scss'
 
 interface HandwritingInputProps {
+  recognizerInitialized: boolean
+  recognizerProgress: number
   onKey: (payload: KeyEvent) => void
   onExit: () => void
 }
 
-const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) => {
+const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitialized, recognizerProgress, onKey, onExit }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasDrawer = useRef<CanvasDrawer | null>(null)
@@ -56,8 +58,8 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
 
   const [_, canvasSize] = useElementSize(containerRef)
 
-  useEffect(() => {
-    if (canvasSize) {
+  useLayoutEffect(() => {
+    if (canvasSize && recognizerInitialized) {
       setupCanvas()
       return () => {
         if (canvasDrawer.current) {
@@ -65,7 +67,7 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
         }
       }
     }
-  }, [canvasSize, setupCanvas])
+  }, [canvasSize, recognizerInitialized, setupCanvas])
 
   function clearCanvas() {
     if (!canvasDrawer.current)
@@ -83,7 +85,7 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
     <div className="handwriting-input">
       <CandidateList candidates={candidates} onSelect={handleSelection} />
       <div ref={containerRef} className="handwriting-content">
-        { canvasSize
+        {canvasSize
           ? (
               <>
                 <div className="handwriting-buttons">
@@ -101,13 +103,32 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ onKey, onExit }) =>
                   </button>
                 </div>
                 <div className="handwriting-canvas-container">
-                  <canvas
-                    ref={canvasRef}
-                    className="handwriting-canvas"
-                    width={canvasSize}
-                    height={canvasSize}
-                  >
-                  </canvas>
+                  {!recognizerInitialized
+                    ? (
+                        <div
+                          className="handwriting-loading"
+                          style={{ width: `${canvasSize}px`, height: `${canvasSize}px` }}
+                        >
+                          <div className="loading-text">
+                            正在加载手写识别...
+                          </div>
+                          <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${recognizerProgress * 100}%` }}></div>
+                          </div>
+                          <div className="progress-text">
+                            {Math.round(recognizerProgress * 100)}%
+                          </div>
+                        </div>
+                      )
+                    : (
+                        <canvas
+                          ref={canvasRef}
+                          className="handwriting-canvas"
+                          width={canvasSize}
+                          height={canvasSize}
+                        >
+                        </canvas>
+                      )}
                 </div>
                 <div className="handwriting-buttons">
                   <button className="handwriting-btn handwriting-btn--function" onClick={() => onKey({ key: 'delete', isControl: true })}>
