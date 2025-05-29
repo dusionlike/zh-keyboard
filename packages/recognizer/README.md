@@ -39,7 +39,7 @@ import { ZhkRecognizer } from '@zh-keyboard/recognizer'
 const recognizer = new ZhkRecognizer({
   modelPath: '/models/handwrite/model.json', // TensorFlow.js模型路径
   dictPath: '/models/dict.txt', // 汉字字典路径
-  backend: 'webgl' // 可选：'webgl'或'cpu'，默认为'cpu'
+  backend: 'webgl' // 可选：'webgl'或'cpu'，默认为'webgl'
 })
 
 // 初始化识别器（加载模型和字典）
