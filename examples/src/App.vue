@@ -30,6 +30,11 @@ onMounted(() => {
     <div class="container">
       <div class="header">
         <h1>中文虚拟键盘测试</h1>
+        <div class="github-link">
+          <a href="https://github.com/dusionlike/zh-keyboard" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.shields.io/github/stars/dusionlike/zh-keyboard?style=social" alt="GitHub stars" />
+          </a>
+        </div>
       </div>
 
       <div class="input-grid">
@@ -131,12 +136,35 @@ body {
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.github-link {
+  flex-shrink: 0;
+}
+
+.github-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.github-link a:hover {
+  opacity: 0.8;
 }
 
 h1 {
   color: #333;
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .input-grid {
