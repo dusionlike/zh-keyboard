@@ -22,7 +22,6 @@ jobs:
       - name: Install and Build 🔧
         run: |
           pnpm install
-          pnpm run build
           pnpm run examples:build
 
       - name: Deploy 🚀

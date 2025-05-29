@@ -1,5 +1,8 @@
+import type { GraphModel, Tensor } from '@tensorflow/tfjs'
 import type { HandwritingRecognizer } from '@zh-keyboard/core'
-import * as tf from '@tensorflow/tfjs'
+import { loadGraphModel } from '@tensorflow/tfjs-converter'
+import * as tf from '@tensorflow/tfjs-core'
+import '@tensorflow/tfjs-backend-webgl'
 
 export interface RecognizerOptions {
   /**
@@ -17,7 +20,7 @@ export interface RecognizerOptions {
 }
 
 export class ZhkRecognizer implements HandwritingRecognizer {
-  private model?: tf.GraphModel
+  private model?: GraphModel
   private dict: string[] = []
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
@@ -28,7 +31,7 @@ export class ZhkRecognizer implements HandwritingRecognizer {
   constructor(options: RecognizerOptions) {
     this.modelPath = options.modelPath
     this.dictPath = options.dictPath
-    this.backend = options.backend || 'cpu'
+    this.backend = options.backend || 'webgl'
     this.canvas = document.createElement('canvas')
     this.canvas.width = this.canvas.height = 64
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!
@@ -37,7 +40,7 @@ export class ZhkRecognizer implements HandwritingRecognizer {
   async initialize() {
     const text = await fetch(this.dictPath).then(r => r.text())
     this.dict = text.split('\n')
-    this.model = await tf.loadGraphModel(this.modelPath)
+    this.model = await loadGraphModel(this.modelPath)
     // 如果后端为webgl，则需要进行预热
     if (this.backend === 'webgl') {
       await tf.setBackend('webgl')
@@ -116,7 +119,7 @@ export class ZhkRecognizer implements HandwritingRecognizer {
         .div(255)
         .expandDims()
 
-      const probs = (model!.predict(image) as tf.Tensor).dataSync()
+      const probs = (model!.predict(image) as Tensor).dataSync()
       const idxs = Array.from(probs.keys()).sort((a, b) => probs[b] - probs[a]).slice(0, 10)
 
       tf.dispose(image)
