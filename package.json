@@ -1,6 +1,6 @@
 {
   "name": "@zh-keyboard/zh-keyboard-monorepo",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "中文虚拟键盘组件库",
   "type": "module",
   "private": true,
@@ -9,6 +9,7 @@
     "build": "pnpm -r --filter=./packages/* run build",
     "test": "pnpm -r --filter=./packages/* run test",
     "lint": "eslint --ext .js,.ts,.tsx,.vue . --fix",
+    "release": "bumpp -r && pnpm publish -r --access public",
     "examples:build": "pnpm run build && cd examples && pnpm run build"
   },
   "keywords": [
@@ -37,6 +38,7 @@
   },
   "dependencies": {
     "@eslint-react/eslint-plugin": "^1.50.0",
+    "bumpp": "^10.1.1",
     "dexie": "^4.0.11",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19"
