@@ -10,7 +10,7 @@ const emit = defineEmits<{
   (e: 'exit'): void
 }>()
 
-const enSymbolStr = '!@#$%^&*(){}[]<>/\\|:;"\',.,?+-=_~`€£¥₹©®™°'
+const enSymbolStr = '!@#$%^&*(){}[]<>/\\|:;"\',.?+-=_~`€£¥₹©®™°'
 const zhSymbolStr = '！＠＃￥％…＆＊（）｛｝［］＜＞／＼｜：；＂＇，。？＋－＝＿～·€£¥₹©®™°'
 const symbolType = ref('en')
 const currentSymbolStr = computed(() => symbolType.value === 'zh' ? zhSymbolStr : enSymbolStr)
