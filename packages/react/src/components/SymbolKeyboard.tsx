@@ -10,7 +10,7 @@ interface SymbolKeyboardProps {
 }
 
 const SymbolKeyboard: React.FC<SymbolKeyboardProps> = ({ onKey, onExit }) => {
-  const enSymbolStr = '!@#$%^&*(){}[]<>/\\|:;"\',.,?+-=_~`€£¥₹©®™°'
+  const enSymbolStr = '!@#$%^&*(){}[]<>/\\|:;"\',.?+-=_~`€£¥₹©®™°'
   const zhSymbolStr = '！＠＃￥％…＆＊（）｛｝［］＜＞／＼｜：；＂＇，。？＋－＝＿～·€£¥₹©®™°'
   const [symbolType, setSymbolType] = useState('en')
   const currentSymbolStr = useMemo(() => (symbolType === 'zh' ? zhSymbolStr : enSymbolStr), [symbolType])
