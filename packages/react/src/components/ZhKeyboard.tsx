@@ -42,7 +42,10 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
   const { recognizerInitialized, recognizerProgress } = useHandwritingRecognizer(enableHandwriting)
 
   useEffect(() => {
-    previousModeRef.current = mode
+    // 仅在基础输入模式下更新 previousModeRef，以便 goBack 正确返回
+    if (mode === 'en' || mode === 'zh') {
+      previousModeRef.current = mode
+    }
   }, [mode])
 
   const [isPositioned, setIsPositioned] = useState(false)
