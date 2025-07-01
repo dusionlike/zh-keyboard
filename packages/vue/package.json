@@ -1,7 +1,7 @@
 {
   "name": "@zh-keyboard/vue",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "基于Vue的中文虚拟键盘组件",
   "author": "dusionlike",
   "license": "Apache 2.0",
