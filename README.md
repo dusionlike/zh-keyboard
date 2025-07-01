@@ -8,8 +8,7 @@
 
 | 预览地址 | 描述 |
 | --- | --- |
-| [预览地址1](https://zh-keyboard-2soo5seb.edgeone.site/) | 国内快速访问 |
-| [预览地址2](https://dusionlike.github.io/zh-keyboard/) | 地址1失效时访问这个 |
+| [预览地址](https://dusionlike.github.io/zh-keyboard/) | 组件库在线演示 |
 
 ## 📦 项目结构
 
