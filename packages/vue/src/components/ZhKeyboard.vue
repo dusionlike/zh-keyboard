@@ -147,53 +147,50 @@ function handleRecognize(results: string[]) {
 </script>
 
 <template>
-  <Teleport to="body" :disabled="position === 'static'">
-    <div
-      v-show="showKeyboard"
-      v-bind="$attrs"
-      ref="keyboardRef"
-      class="zhk"
-      :class="{
-        'zhk--floating': position === 'float',
-        'zhk--bottom': position === 'bottom',
-        'zhk--disabled': isKeyboardDisabled,
-      }"
-      :style="{
-        '--keyboard-height': `${keyboardHeight}px`,
-        ...keyboardPosition,
-      }"
-      @mousedown.prevent
-    >
-      <div v-if="isKeyboardDisabled || !showKeyboard || !keyboardHeight" class="zhk__disabled-overlay">
-        <span>请选择输入框以启用键盘</span>
-      </div>
-      <template v-else>
-        <HandwritingInput
-          v-if="mode === 'hand'"
-          :recognizer-initialized
-          :recognizer-progress
-          @key="handleKeyEvent"
-          @exit="goBack"
-          @recognize="handleRecognize"
-        />
-        <NumericKeyboard
-          v-else-if="mode === 'num'"
-          :keyboard-rows="numKeys"
-          @key="handleKeyEvent"
-          @exit="goBack"
-        />
-        <SymbolKeyboard
-          v-else-if="mode === 'symbol'"
-          @key="handleKeyEvent"
-          @exit="goBack"
-        />
-        <KeyboardBase
-          v-else-if="mode === 'en' || mode === 'zh'"
-          v-model="mode"
-          :enable-handwriting="enableHandwriting"
-          @key="handleKeyEvent"
-        />
-      </template>
+  <div
+    v-show="showKeyboard"
+    ref="keyboardRef"
+    class="zhk"
+    :class="{
+      'zhk--floating': position === 'float',
+      'zhk--bottom': position === 'bottom',
+      'zhk--disabled': isKeyboardDisabled,
+    }"
+    :style="{
+      '--keyboard-height': `${keyboardHeight}px`,
+      ...keyboardPosition,
+    }"
+    @mousedown.prevent
+  >
+    <div v-if="isKeyboardDisabled || !showKeyboard || !keyboardHeight" class="zhk__disabled-overlay">
+      <span>请选择输入框以启用键盘</span>
     </div>
-  </Teleport>
+    <template v-else>
+      <HandwritingInput
+        v-if="mode === 'hand'"
+        :recognizer-initialized
+        :recognizer-progress
+        @key="handleKeyEvent"
+        @exit="goBack"
+        @recognize="handleRecognize"
+      />
+      <NumericKeyboard
+        v-else-if="mode === 'num'"
+        :keyboard-rows="numKeys"
+        @key="handleKeyEvent"
+        @exit="goBack"
+      />
+      <SymbolKeyboard
+        v-else-if="mode === 'symbol'"
+        @key="handleKeyEvent"
+        @exit="goBack"
+      />
+      <KeyboardBase
+        v-else-if="mode === 'en' || mode === 'zh'"
+        v-model="mode"
+        :enable-handwriting="enableHandwriting"
+        @key="handleKeyEvent"
+      />
+    </template>
+  </div>
 </template>
