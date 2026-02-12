@@ -35,7 +35,7 @@ const numKeys = ref<string[][]>([
   <div class="root-container">
     <div class="container">
       <div class="header">
-        <h1>中文虚拟键盘测试</h1>
+        <h1>中文虚拟键盘测试 Vue</h1>
       </div>
 
       <div class="input-grid">
