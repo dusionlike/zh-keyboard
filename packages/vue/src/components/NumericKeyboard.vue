@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
+import { getKeyboardConfig } from '@zh-keyboard/core'
 import backspaceIcon from '../assets/icons/keyboard-backspace.svg'
 import returnIcon from '../assets/icons/keyboard-return.svg'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
@@ -8,12 +9,13 @@ import '../styles/NumericKeyboard.scss'
 withDefaults(defineProps<{
   keyboardRows?: string[][]
 }>(), {
-  keyboardRows: () => [
-    ['1', '2', '3'],
-    ['4', '5', '6'],
-    ['7', '8', '9'],
-    ['back', '0', 'space'],
-  ],
+  keyboardRows: () => getKeyboardConfig().numKeys
+    || [
+      ['1', '2', '3'],
+      ['4', '5', '6'],
+      ['7', '8', '9'],
+      ['back', '0', 'space'],
+    ],
 })
 
 const emit = defineEmits<{

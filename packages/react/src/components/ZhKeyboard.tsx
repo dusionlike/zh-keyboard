@@ -31,7 +31,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
   onKey,
   className,
   style,
-  numKeys = getKeyboardConfig().numKeys,
+  numKeys,
 }) => {
   const [mode, setMode] = useState<KeyBoardMode>(defaultMode)
   const previousModeRef = useRef<KeyBoardMode>(defaultMode)
