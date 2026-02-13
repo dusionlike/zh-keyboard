@@ -1,6 +1,12 @@
 @use 'sass:color';
 
 .symbol-keyboard {
+  --key-size: max(45px, calc(var(--keyboard-height, 300px) / 6.5));
+  --lang-btn-size: var(--key-size);
+  --gap: max(4px, calc(var(--keyboard-height, 300px) / 75));
+  --function-width: var(--key-size);
+  --symbol-min-size: calc(var(--key-size) * 0.85);
+
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -10,7 +16,7 @@
   &__content {
     display: flex;
     flex: 1;
-    gap: 6px;
+    gap: var(--gap);
     height: 100%;
   }
 
@@ -18,14 +24,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 6px;
-    width: 60px;
+    gap: var(--gap);
+    width: var(--function-width);
   }
 
   &__lang-selector {
     display: flex;
     flex-direction: column;
-    height: calc(60px * 2 + 6px);
+    height: calc(var(--lang-btn-size) * 2 + var(--gap));
   }
 
   &__lang-btn {
@@ -35,12 +41,12 @@
     justify-content: center;
     background-color: var(--key-background-color, #fff);
     border: 1px solid var(--border-color, #dcdcdc);
-    font-size: 16px;
+    font-size: max(12px, calc(var(--key-font-size, 1rem) * 0.8));
     cursor: pointer;
     transition: all 0.1s;
     margin: 0;
     box-sizing: border-box;
-    width: 60px;
+    width: var(--lang-btn-size);
     flex: 1;
     flex-shrink: 0;
 
@@ -69,7 +75,7 @@
   &__control-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: calc(var(--gap) + 2px);
   }
 
   &__symbols-container {
@@ -100,8 +106,8 @@
 
   &__symbols-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fit, minmax(var(--symbol-min-size), 1fr));
+    gap: var(--gap);
     width: 100%;
     max-height: 100%;
     padding-bottom: 10px;
@@ -114,17 +120,17 @@
     background-color: var(--key-background-color, #fff);
     border: 1px solid var(--border-color, #dcdcdc);
     border-radius: var(--key-border-radius, 5px);
-    font-size: 24px;
+    font-size: max(18px, var(--key-font-size, 1rem));
     font-weight: normal;
     color: var(--key-text-color, #333);
     cursor: pointer;
     transition: all 0.1s;
     margin: 0;
     box-sizing: border-box;
-    min-width: 60px;
-    max-width: 80px;
+    min-width: var(--symbol-min-size);
+    max-width: var(--key-size);
     width: 100%;
-    height: 60px;
+    height: var(--key-size);
     aspect-ratio: 1;
     flex-shrink: 0;
 
@@ -138,8 +144,8 @@
 
     &--function {
       background-color: var(--function-key-color, #e6e6e6);
-      width: 60px;
-      height: 60px;
+      width: var(--function-width);
+      height: var(--key-size);
       aspect-ratio: auto;
 
       &:hover {
