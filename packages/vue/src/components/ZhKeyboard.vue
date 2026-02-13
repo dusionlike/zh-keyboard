@@ -45,8 +45,8 @@ const emit = defineEmits<{
   (e: 'key', payload: KeyEvent): void
 }>()
 
-const mode = ref<KeyBoardMode>(props.defaultMode || 'en')
-const previousMode = ref<KeyBoardMode>(props.defaultMode || 'en')
+const mode = ref<KeyBoardMode>(props.defaultMode)
+const previousMode = ref<KeyBoardMode>(props.defaultMode)
 
 const candidates = ref<string[]>([])
 const isSelectionOpen = ref(false)
@@ -138,6 +138,9 @@ function inputText(text: string) {
 }
 
 function goBack() {
+  if (['hand', 'num', 'symbol'].includes(previousMode.value)) {
+    previousMode.value = props.defaultMode
+  }
   mode.value = previousMode.value
 }
 
