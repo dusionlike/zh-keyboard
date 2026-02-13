@@ -13,6 +13,7 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
   --key-font-size: max(1rem, calc(var(--keyboard-height) / 20));
   --candidate-font-size: max(24px, calc(var(--keyboard-height) / 12));
   --gap: max(4px, calc(var(--keyboard-height) / 75));
+  --gap: clamp(4px, calc(var(--keyboard-height) / 75), 6px);
   --key-width: calc((100% - 9 * var(--gap)) / 10);
   --key-min-width-function: 45px;
   --key-icon-size: calc(var(--key-font-size) * 1.2);
