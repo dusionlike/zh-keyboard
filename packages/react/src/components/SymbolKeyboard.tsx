@@ -1,8 +1,8 @@
 import type { KeyEvent } from '../types'
-import { createKeyRepeater } from '@zh-keyboard/core'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import lockOpenIconUrl from '../assets/icons/lock-open-outline.svg'
 import lockClosedIconUrl from '../assets/icons/lock-outline.svg'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import '../styles/SymbolKeyboard.scss'
 
 interface SymbolKeyboardProps {
@@ -17,14 +17,7 @@ const SymbolKeyboard: React.FC<SymbolKeyboardProps> = ({ onKey, onExit }) => {
   const currentSymbolStr = useMemo(() => (symbolType === 'zh' ? zhSymbolStr : enSymbolStr), [symbolType])
   const [isLocked, setIsLocked] = useState(false)
 
-  const repeaterRef = useRef(createKeyRepeater())
-
-  useEffect(() => {
-    const repeater = repeaterRef.current
-    return () => {
-      repeater.stop()
-    }
-  }, [])
+  const { startRepeat, stopRepeat } = useKeyRepeater()
 
   function handleKeyPress(key: string) {
     onKey({ key })
@@ -41,23 +34,15 @@ const SymbolKeyboard: React.FC<SymbolKeyboardProps> = ({ onKey, onExit }) => {
     setIsLocked(!isLocked)
   }
 
-  function startRepeat(e: React.PointerEvent, action: () => void) {
-    e.preventDefault()
-    ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
-    repeaterRef.current.start(action)
-  }
-
-  function stopRepeat() {
-    repeaterRef.current.stop()
-  }
-
-  function pressOnce(e: React.PointerEvent, action: () => void) {
-    e.preventDefault()
-    action()
-  }
-
   function preventContextMenu(e: React.MouseEvent) {
     e.preventDefault()
+  }
+
+  function onSymbolDown(char: string, e: React.PointerEvent) {
+    if (!isLocked) {
+      return
+    }
+    startRepeat(e, () => handleKeyPress(char))
   }
 
   return (
@@ -117,13 +102,8 @@ const SymbolKeyboard: React.FC<SymbolKeyboardProps> = ({ onKey, onExit }) => {
               <button
                 key={`key-${char}`}
                 className="symbol-keyboard__key"
-                onPointerDown={(e) => {
-                  if (!isLocked) {
-                    pressOnce(e, () => handleKeyPress(char))
-                    return
-                  }
-                  startRepeat(e, () => handleKeyPress(char))
-                }}
+                onClick={() => !isLocked && handleKeyPress(char)}
+                onPointerDown={e => onSymbolDown(char, e)}
                 onPointerUp={stopRepeat}
                 onPointerLeave={stopRepeat}
                 onPointerCancel={stopRepeat}

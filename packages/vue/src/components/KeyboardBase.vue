@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
-import { createKeyRepeater } from '@zh-keyboard/core'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import CandidateBar from './CandidateBar.vue'
 import '../styles/KeyboardBase.scss'
 
@@ -59,21 +59,7 @@ const keyboardRows = [
 
 const pinyin = ref('')
 
-const repeater = createKeyRepeater()
-
-function startRepeat(e: PointerEvent, action: () => void) {
-  e.preventDefault()
-  ;(e.currentTarget as HTMLElement | null)?.setPointerCapture?.(e.pointerId)
-  repeater.start(action)
-}
-
-function stopRepeat() {
-  repeater.stop()
-}
-
-onBeforeUnmount(() => {
-  repeater.stop()
-})
+const { startRepeat, stopRepeat } = useKeyRepeater()
 
 function handleDelete() {
   if (mode.value === 'zh' && pinyin.value) {

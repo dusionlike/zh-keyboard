@@ -1,10 +1,10 @@
 import type { KeyBoardMode, KeyEvent } from '../types'
-import { createKeyRepeater } from '@zh-keyboard/core'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardCaps from '../assets/icons/keyboard-caps.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
 import keyboardSpace from '../assets/icons/keyboard-space.svg'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import CandidateBar from './CandidateBar'
 import '../styles/KeyboardBase.scss'
 
@@ -19,14 +19,7 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
   const [isUpperCase, setIsUpperCase] = useState(false)
   const [pinyin, setPinyin] = useState('')
 
-  const repeaterRef = useRef(createKeyRepeater())
-
-  useEffect(() => {
-    const repeater = repeaterRef.current
-    return () => {
-      repeater.stop()
-    }
-  }, [])
+  const { startRepeat, stopRepeat } = useKeyRepeater()
 
   const isChineseMode = useMemo(() => mode === 'zh', [mode])
   const showUpperCase = useMemo(() => isChineseMode ? true : isUpperCase, [isChineseMode, isUpperCase])
@@ -88,16 +81,6 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
   const isHandwritingButtonDisabled = useMemo(() => {
     return !enableHandwriting
   }, [enableHandwriting])
-
-  function startRepeat(e: React.PointerEvent, action: () => void) {
-    e.preventDefault()
-    ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
-    repeaterRef.current.start(action)
-  }
-
-  function stopRepeat() {
-    repeaterRef.current.stop()
-  }
 
   function preventContextMenu(e: React.MouseEvent) {
     e.preventDefault()

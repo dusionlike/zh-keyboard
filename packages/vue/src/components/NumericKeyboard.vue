@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
-import { createKeyRepeater } from '@zh-keyboard/core'
-import { onBeforeUnmount } from 'vue'
 import backspaceIcon from '../assets/icons/keyboard-backspace.svg'
 import returnIcon from '../assets/icons/keyboard-return.svg'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import '../styles/NumericKeyboard.scss'
 
 withDefaults(defineProps<{
@@ -41,50 +40,21 @@ function goBack() {
   emit('exit')
 }
 
-const repeater = createKeyRepeater()
+const { startRepeat, stopRepeat } = useKeyRepeater()
 
-function startRepeat(e: PointerEvent, action: () => void) {
-  e.preventDefault()
-  ;(e.currentTarget as HTMLElement | null)?.setPointerCapture?.(e.pointerId)
-  repeater.start(action)
-}
-
-function stopRepeat() {
-  repeater.stop()
-}
-
-onBeforeUnmount(() => {
-  repeater.stop()
-})
-
-function pressOnce(e: PointerEvent, action: () => void) {
-  e.preventDefault()
-  action()
-}
-
-function leftKeyAction(key: string): (() => void) {
-  if (key === 'back')
-    return () => goBack()
-  if (key === 'space')
-    return () => handleKeyPress(' ')
-  return () => handleKeyPress(key)
-}
-
-function onLeftKeyDown(key: string, e: PointerEvent) {
-  const action = leftKeyAction(key)
+function onKeyDown(key: string, e: PointerEvent) {
   if (key === 'back') {
-    pressOnce(e, action)
-    return
+    // 返回按钮特殊处理，从onclick触发
+  } else {
+    if (key === 'space') {
+      key = ' '
+    }
+    if (key === 'delete' || key === 'enter') {
+      startRepeat(e, () => handleSpecialKey(key))
+    } else {
+      startRepeat(e, () => handleKeyPress(key))
+    }
   }
-  startRepeat(e, action)
-}
-
-function onFunctionKeyDown(key: string, e: PointerEvent) {
-  if (key === '.' || key === '@') {
-    startRepeat(e, () => handleKeyPress(key))
-    return
-  }
-  startRepeat(e, () => handleSpecialKey(key))
 }
 </script>
 
@@ -102,7 +72,8 @@ function onFunctionKeyDown(key: string, e: PointerEvent) {
                 'num-keyboard__key--back': key === 'back',
                 'num-keyboard__key--space': key === 'space',
               }"
-              @pointerdown="(e) => onLeftKeyDown(key, e)"
+              @click="key === 'back' && goBack()"
+              @pointerdown="(e) => onKeyDown(key, e)"
               @pointerup="stopRepeat"
               @pointerleave="stopRepeat"
               @pointercancel="stopRepeat"
@@ -127,7 +98,7 @@ function onFunctionKeyDown(key: string, e: PointerEvent) {
           v-for="(fKey, index) in functionKeys"
           :key="`func-${index}`"
           class="num-keyboard__key num-keyboard__key--function"
-          @pointerdown="(e) => onFunctionKeyDown(fKey.key, e)"
+          @pointerdown="(e) => onKeyDown(fKey.key, e)"
           @pointerup="stopRepeat"
           @pointerleave="stopRepeat"
           @pointercancel="stopRepeat"

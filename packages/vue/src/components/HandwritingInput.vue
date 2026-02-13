@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@vueuse/core'
-import { CanvasDrawer, createKeyRepeater } from '@zh-keyboard/core'
+import { CanvasDrawer } from '@zh-keyboard/core'
 import { nextTick, onUnmounted, ref, watchEffect } from 'vue'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import { getHandwritingRecognizer } from '../utils/handwriting'
 import CandidateList from './CandidateList.vue'
 import '../styles/HandwritingInput.scss'
@@ -48,22 +49,7 @@ function setupCanvas() {
 
 const candidates = ref<string[]>([])
 
-const repeater = createKeyRepeater()
-
-function startRepeat(e: PointerEvent, action: () => void) {
-  e.preventDefault()
-  ;(e.currentTarget as HTMLElement | null)?.setPointerCapture?.(e.pointerId)
-  repeater.start(action)
-}
-
-function stopRepeat() {
-  repeater.stop()
-}
-
-function pressOnce(e: PointerEvent, action: () => void) {
-  e.preventDefault()
-  action()
-}
+const { startRepeat, stopRepeat } = useKeyRepeater()
 
 // 识别当前笔迹
 async function recognizeStroke() {
@@ -90,12 +76,11 @@ async function recognizeStroke() {
   }
 }
 
-// 组件卸载时清理识别器和计时器
+// 组件卸载时清理识别器
 onUnmounted(() => {
   if (canvasDrawer) {
     canvasDrawer.destroy()
   }
-  repeater.stop()
 })
 
 watchEffect(() => {
@@ -201,7 +186,7 @@ function handleSelection(candidate: string) {
         </button>
         <button
           class="handwriting-btn handwriting-btn--function"
-          @pointerdown="(e) => pressOnce(e, () => emit('exit'))"
+          @click="emit('exit')"
           @contextmenu.prevent
         >
           返回

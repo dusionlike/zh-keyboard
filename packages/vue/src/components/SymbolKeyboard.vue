@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
-import { createKeyRepeater } from '@zh-keyboard/core'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import lockOpenIconUrl from '../assets/icons/lock-open-outline.svg'
 import lockClosedIconUrl from '../assets/icons/lock-outline.svg'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import '../styles/SymbolKeyboard.scss'
 
 const emit = defineEmits<{
@@ -17,27 +17,11 @@ const symbolType = ref('en')
 const currentSymbolStr = computed(() => symbolType.value === 'zh' ? zhSymbolStr : enSymbolStr)
 const isLocked = ref(false)
 
-const repeater = createKeyRepeater()
-
-function startRepeat(e: PointerEvent, action: () => void) {
-  e.preventDefault()
-  ;(e.currentTarget as HTMLElement | null)?.setPointerCapture?.(e.pointerId)
-  repeater.start(action)
-}
-
-function stopRepeat() {
-  repeater.stop()
-}
-
-onBeforeUnmount(() => {
-  repeater.stop()
-})
+const { startRepeat, stopRepeat } = useKeyRepeater()
 
 function onSymbolDown(char: string, e: PointerEvent) {
-  // 未锁定时会自动退出，长按连发没有意义；保持单次输入。
+  // 未锁定时会自动退出，特殊处理，从onclick触发
   if (!isLocked.value) {
-    e.preventDefault()
-    handleKeyPress(char)
     return
   }
   startRepeat(e, () => handleKeyPress(char))
@@ -111,6 +95,7 @@ function toggleLock() {
             v-for="(char, index) in currentSymbolStr"
             :key="`key-${index}`"
             class="symbol-keyboard__key"
+            @click="!isLocked && handleKeyPress(char)"
             @pointerdown="(e) => onSymbolDown(char, e)"
             @pointerup="stopRepeat"
             @pointerleave="stopRepeat"

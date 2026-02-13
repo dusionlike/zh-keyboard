@@ -1,9 +1,9 @@
 import type { KeyEvent } from '../types'
-import { createKeyRepeater } from '@zh-keyboard/core'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
 import keyboardSpace from '../assets/icons/keyboard-space.svg'
+import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import '../styles/NumericKeyboard.scss'
 
 interface NumericKeyboardProps {
@@ -24,14 +24,7 @@ const NumericKeyboard: React.FC<NumericKeyboardProps> = ({
   onExit,
   keyboardRows = DEFAULT_KEYBOARD_ROWS,
 }) => {
-  const repeaterRef = useRef(createKeyRepeater())
-
-  useEffect(() => {
-    const repeater = repeaterRef.current
-    return () => {
-      repeater.stop()
-    }
-  }, [])
+  const { startRepeat, stopRepeat } = useKeyRepeater()
 
   const functionKeys = [
     { key: 'delete', icon: keyboardBackspace, text: '', alt: 'Delete' },
@@ -52,31 +45,31 @@ const NumericKeyboard: React.FC<NumericKeyboardProps> = ({
     onExit()
   }
 
-  function startRepeat(e: React.PointerEvent, action: () => void) {
-    e.preventDefault()
-    ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
-    repeaterRef.current.start(action)
-  }
-
-  function stopRepeat() {
-    repeaterRef.current.stop()
-  }
-
-  function pressOnce(e: React.PointerEvent, action: () => void) {
-    e.preventDefault()
-    action()
-  }
-
   function preventContextMenu(e: React.MouseEvent) {
     e.preventDefault()
   }
 
-  function leftKeyAction(key: string): () => void {
+  function onKeyDown(key: string, e: React.PointerEvent<Element>) {
+    if (key === 'back') {
+    // 返回按钮特殊处理，从onclick触发
+    } else {
+      if (key === 'space') {
+        key = ' '
+      }
+      if (key === 'delete' || key === 'enter') {
+        startRepeat(e, () => handleSpecialKey(key))
+      } else {
+        startRepeat(e, () => handleKeyPress(key))
+      }
+    }
+  }
+
+  const renderKeyContent = (key: string) => {
     if (key === 'back')
-      return goBack
+      return '返回'
     if (key === 'space')
-      return () => handleKeyPress(' ')
-    return () => handleKeyPress(key)
+      return <img src={keyboardSpace} className="zhk-base__key-icon" alt="Space" />
+    return key
   }
 
   return (
@@ -94,30 +87,14 @@ const NumericKeyboard: React.FC<NumericKeyboardProps> = ({
                     } ${
                       key === 'space' ? 'num-keyboard__key--space' : ''
                     }`}
-                    onPointerDown={(e) => {
-                      const action = leftKeyAction(key)
-                      if (key === 'back') {
-                        pressOnce(e, action)
-                        return
-                      }
-                      startRepeat(e, action)
-                    }}
+                    onClick={() => key === 'back' && goBack()}
+                    onPointerDown={e => onKeyDown(key, e)}
                     onPointerUp={stopRepeat}
                     onPointerLeave={stopRepeat}
                     onPointerCancel={stopRepeat}
                     onContextMenu={preventContextMenu}
                   >
-                    {key === 'back'
-                      ? (
-                          '返回'
-                        )
-                      : key === 'space'
-                        ? (
-                            <img src={keyboardSpace} className="zhk-base__key-icon" alt="Space" />
-                          )
-                        : (
-                            key
-                          )}
+                    {renderKeyContent(key)}
                   </button>
                 ))}
               </div>
