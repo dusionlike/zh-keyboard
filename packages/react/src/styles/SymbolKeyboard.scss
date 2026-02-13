@@ -1,7 +1,7 @@
 @use 'sass:color';
 
 .symbol-keyboard {
-  --key-size: max(45px, calc(var(--keyboard-height, 300px) / 6.5));
+  --key-size: max(45px, calc(var(--keyboard-height, 300px) / 5));
   --lang-btn-size: var(--key-size);
   --gap: max(4px, calc(var(--keyboard-height, 300px) / 75));
   --function-width: var(--key-size);
