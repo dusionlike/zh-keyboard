@@ -44,6 +44,22 @@ pnpm add @zh-keyboard/react
 
 ## 基本使用
 
+### 全局配置
+
+可以在项目入口文件中设置全局配置：
+
+```typescript
+import { setKeyboardConfig } from '@zh-keyboard/react'
+
+setKeyboardConfig({
+  defaultMode: 'zh',
+  enableHandwriting: true,
+  position: 'float'
+})
+```
+
+### 基础用法
+
 - 为了防止移动端设备弹出系统默认的键盘，建议在输入框上设置 `inputMode="none"` 属性。
 - 此外，可以通过在输入框上设置 `data-inputmode` 属性来指定组件默认打开的键盘类型 (可选值为 `'en'`, `'zh'`, `'hand'`, `'num'`)，具体键盘模式的说明请参考 `defaultMode` 属性。
 

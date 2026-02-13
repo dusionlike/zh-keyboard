@@ -1,6 +1,11 @@
 import ZhKeyboard from './components/ZhKeyboard'
 
-export * from './utils/handwriting'
+export {
+  getHandwritingRecognizer,
+  getKeyboardConfig,
+  registerHandwritingRecognizer,
+  setKeyboardConfig,
+} from '@zh-keyboard/core'
 
 export { ZhKeyboard }
 export default ZhKeyboard

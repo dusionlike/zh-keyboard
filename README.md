@@ -50,6 +50,32 @@ npm install @zh-keyboard/vue
 
 详细使用方法请参阅 [Vue组件文档](packages/vue/README.md)。
 
+### 全局配置 (Global Config)
+
+无论使用 Vue 还是 React，你都可以通过 `@zh-keyboard/core` 或直接从组件库包中导出 `setKeyboardConfig` 来设置全局默认值。
+
+```typescript
+import { setKeyboardConfig } from '@zh-keyboard/core'
+
+setKeyboardConfig({
+  defaultMode: 'zh',
+  enableHandwriting: true,
+  position: 'float',
+  // ... 其他配置
+})
+```
+
+在 Vue 中，你也可以在插件安装时配置：
+
+```typescript
+import ZhKeyboardPlugin from '@zh-keyboard/vue'
+
+app.use(ZhKeyboardPlugin, {
+  defaultMode: 'zh',
+  enableHandwriting: true
+})
+```
+
 ### React组件
 
 ```bash

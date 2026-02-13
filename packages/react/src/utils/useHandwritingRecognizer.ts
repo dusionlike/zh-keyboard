@@ -1,5 +1,5 @@
+import { getHandwritingRecognizer } from '@zh-keyboard/core'
 import { useEffect, useState } from 'react'
-import { getHandwritingRecognizer } from './handwriting'
 
 export function useHandwritingRecognizer(enableHandwriting = false) {
   const [recognizerInitialized, setRecognizerInitialized] = useState(false)

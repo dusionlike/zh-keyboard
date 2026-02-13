@@ -1,8 +1,8 @@
+import { registerHandwritingRecognizer } from '@zh-keyboard/core'
 import { ZhkRecognizer } from '@zh-keyboard/recognizer'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import { registerHandwritingRecognizer } from './utils/handwriting.ts'
 
 registerHandwritingRecognizer(new ZhkRecognizer({
   modelPath: '/models/handwrite/model.json',

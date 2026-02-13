@@ -1,7 +1,7 @@
 import type { KeyboardPosition } from '@zh-keyboard/core'
 import type { KeyBoardMode, KeyEvent } from '../types'
 import { useActiveElement, useElementSize, useEventListener } from '@reactuses/core'
-import { calculateKeyboardPosition, delToInputElement, isInputElement, writeToInputElement } from '@zh-keyboard/core'
+import { calculateKeyboardPosition, delToInputElement, getKeyboardConfig, isInputElement, writeToInputElement } from '@zh-keyboard/core'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
@@ -24,14 +24,14 @@ interface ZhKeyboardProps {
 }
 
 const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
-  defaultMode = 'en',
-  enableHandwriting = false,
-  position = 'static',
-  disableWhenNoFocus = true,
+  defaultMode = getKeyboardConfig().defaultMode ?? 'en',
+  enableHandwriting = getKeyboardConfig().enableHandwriting ?? false,
+  position = getKeyboardConfig().position ?? 'static',
+  disableWhenNoFocus = getKeyboardConfig().disableWhenNoFocus ?? true,
   onKey,
   className,
   style,
-  numKeys,
+  numKeys = getKeyboardConfig().numKeys,
 }) => {
   const [mode, setMode] = useState<KeyBoardMode>(defaultMode)
   const previousModeRef = useRef<KeyBoardMode>(defaultMode)

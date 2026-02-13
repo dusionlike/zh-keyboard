@@ -2,7 +2,7 @@
 import type { KeyboardPosition } from '@zh-keyboard/core'
 import type { KeyBoardMode, KeyEvent } from '../types'
 import { useActiveElement, useDebounceFn, useElementSize, useEventListener } from '@vueuse/core'
-import { calculateKeyboardPosition, delToInputElement, isInputElement, writeToInputElement } from '@zh-keyboard/core'
+import { calculateKeyboardPosition, delToInputElement, getKeyboardConfig, isInputElement, writeToInputElement } from '@zh-keyboard/core'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { useHandwritingRecognizer } from '../utils/useHandwritingRecognizer'
 import HandwritingInput from './HandwritingInput.vue'
@@ -35,10 +35,10 @@ const props = withDefaults(defineProps<{
    */
   numKeys?: string[][]
 }>(), {
-  defaultMode: 'en',
-  enableHandwriting: false,
-  position: 'static',
-  disableWhenNoFocus: true,
+  defaultMode: getKeyboardConfig().defaultMode ?? 'en' as const,
+  enableHandwriting: getKeyboardConfig().enableHandwriting ?? false,
+  position: getKeyboardConfig().position ?? 'static',
+  disableWhenNoFocus: getKeyboardConfig().disableWhenNoFocus ?? true,
 })
 
 const emit = defineEmits<{

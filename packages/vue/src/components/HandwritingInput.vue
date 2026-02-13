@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@vueuse/core'
-import { CanvasDrawer } from '@zh-keyboard/core'
+import { CanvasDrawer, getHandwritingRecognizer } from '@zh-keyboard/core'
 import { nextTick, onUnmounted, ref, watchEffect } from 'vue'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
-import { getHandwritingRecognizer } from '../utils/handwriting'
 import CandidateList from './CandidateList.vue'
 import '../styles/HandwritingInput.scss'
 

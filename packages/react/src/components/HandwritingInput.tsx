@@ -1,11 +1,10 @@
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@reactuses/core'
-import { CanvasDrawer } from '@zh-keyboard/core'
+import { CanvasDrawer, getHandwritingRecognizer } from '@zh-keyboard/core'
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
-import { getHandwritingRecognizer } from '../utils/handwriting'
 import CandidateList from './CandidateList'
 import '../styles/HandwritingInput.scss'
 
