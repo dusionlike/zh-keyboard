@@ -27,8 +27,9 @@ const NumericKeyboard: React.FC<NumericKeyboardProps> = ({
   const repeaterRef = useRef(createKeyRepeater())
 
   useEffect(() => {
+    const repeater = repeaterRef.current
     return () => {
-      repeaterRef.current.stop()
+      repeater.stop()
     }
   }, [])
 
@@ -93,7 +94,7 @@ const NumericKeyboard: React.FC<NumericKeyboardProps> = ({
                     } ${
                       key === 'space' ? 'num-keyboard__key--space' : ''
                     }`}
-                    onPointerDown={e => {
+                    onPointerDown={(e) => {
                       const action = leftKeyAction(key)
                       if (key === 'back') {
                         pressOnce(e, action)
@@ -129,7 +130,7 @@ const NumericKeyboard: React.FC<NumericKeyboardProps> = ({
             <button
               key={`func-${fKey.key}`}
               className="num-keyboard__key num-keyboard__key--function"
-              onPointerDown={e => {
+              onPointerDown={(e) => {
                 if (fKey.key === '.' || fKey.key === '@') {
                   startRepeat(e, () => handleKeyPress(fKey.key))
                   return

@@ -20,8 +20,9 @@ const SymbolKeyboard: React.FC<SymbolKeyboardProps> = ({ onKey, onExit }) => {
   const repeaterRef = useRef(createKeyRepeater())
 
   useEffect(() => {
+    const repeater = repeaterRef.current
     return () => {
-      repeaterRef.current.stop()
+      repeater.stop()
     }
   }, [])
 

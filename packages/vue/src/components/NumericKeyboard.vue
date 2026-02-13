@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
 import { createKeyRepeater } from '@zh-keyboard/core'
+import { onBeforeUnmount } from 'vue'
 import backspaceIcon from '../assets/icons/keyboard-backspace.svg'
 import returnIcon from '../assets/icons/keyboard-return.svg'
 import '../styles/NumericKeyboard.scss'
-import { onBeforeUnmount } from 'vue'
 
 withDefaults(defineProps<{
   keyboardRows?: string[][]

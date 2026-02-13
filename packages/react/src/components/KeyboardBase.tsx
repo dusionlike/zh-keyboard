@@ -22,8 +22,9 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
   const repeaterRef = useRef(createKeyRepeater())
 
   useEffect(() => {
+    const repeater = repeaterRef.current
     return () => {
-      repeaterRef.current.stop()
+      repeater.stop()
     }
   }, [])
 

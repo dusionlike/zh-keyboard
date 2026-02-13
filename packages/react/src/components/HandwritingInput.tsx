@@ -25,8 +25,9 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
   const repeaterRef = useRef(createKeyRepeater())
 
   useEffect(() => {
+    const repeater = repeaterRef.current
     return () => {
-      repeaterRef.current.stop()
+      repeater.stop()
     }
   }, [])
 
