@@ -1,6 +1,6 @@
 {
   "name": "@zh-keyboard/recognizer",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "中文手写汉字识别器组件",
   "author": "dusionlike",
   "license": "Apache 2.0",
