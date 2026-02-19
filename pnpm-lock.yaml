@@ -75,6 +75,22 @@ importers:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@22.14.1)(sass-embedded@1.86.3)(sass@1.89.0)
 
+  packages/pinyin:
+    dependencies:
+      dexie:
+        specifier: ^4.0.11
+        version: 4.0.11
+    devDependencies:
+      tsdown:
+        specifier: ^0.11.1
+        version: 0.11.1(typescript@5.8.3)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@22.14.1)(sass-embedded@1.86.3)(sass@1.89.0)
+
   packages/react:
     dependencies:
       '@reactuses/core':
@@ -83,6 +99,9 @@ importers:
       '@zh-keyboard/core':
         specifier: workspace:*
         version: link:../core
+      '@zh-keyboard/pinyin':
+        specifier: workspace:*
+        version: link:../pinyin
       '@zh-keyboard/recognizer':
         specifier: workspace:*
         version: link:../recognizer
@@ -151,6 +170,9 @@ importers:
       '@zh-keyboard/core':
         specifier: workspace:*
         version: link:../core
+      '@zh-keyboard/pinyin':
+        specifier: workspace:*
+        version: link:../pinyin
       '@zh-keyboard/recognizer':
         specifier: workspace:*
         version: link:../recognizer
@@ -6638,6 +6660,21 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  rolldown-plugin-dts@0.11.3(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.8.3):
+    dependencies:
+      '@babel/generator': 7.27.1
+      '@babel/parser': 7.27.2
+      '@babel/types': 7.27.1
+      ast-kit: 2.0.0
+      debug: 4.4.0
+      dts-resolver: 1.1.2
+      get-tsconfig: 4.10.0
+      rolldown: 1.0.0-beta.8-commit.534fde3
+    optionalDependencies:
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - supports-color
+
   rolldown@1.0.0-beta.8-commit.534fde3:
     dependencies:
       '@oxc-project/types': 0.68.1
@@ -6956,6 +6993,26 @@ snapshots:
       hookable: 5.5.3
       rolldown: 1.0.0-beta.8-commit.534fde3
       rolldown-plugin-dts: 0.11.3(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.7.3)
+      semver: 7.7.1
+      tinyexec: 1.0.1
+      tinyglobby: 0.2.13
+      unconfig: 7.3.2
+    transitivePeerDependencies:
+      - '@oxc-project/runtime'
+      - supports-color
+      - typescript
+
+  tsdown@0.11.1(typescript@5.8.3):
+    dependencies:
+      ansis: 3.17.0
+      cac: 6.7.14
+      chokidar: 4.0.3
+      debug: 4.4.0
+      diff: 7.0.0
+      empathic: 1.1.0
+      hookable: 5.5.3
+      rolldown: 1.0.0-beta.8-commit.534fde3
+      rolldown-plugin-dts: 0.11.3(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.8.3)
       semver: 7.7.1
       tinyexec: 1.0.1
       tinyglobby: 0.2.13
