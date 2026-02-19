@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
-import { AdvancedPinyinEngine } from '@zh-keyboard/core'
-import { computed, ref, watchEffect } from 'vue'
+import { getPinyinEngine } from '@zh-keyboard/core'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import CandidateList from './CandidateList.vue'
 import CandidateSelection from './CandidateSelection.vue'
 import '../styles/CandidateBar.scss'
@@ -15,42 +16,87 @@ const currentPinyin = defineModel<string>({
   required: true,
 })
 
-// 拼音输入法引擎
-const inputEngine = new AdvancedPinyinEngine()
+// 拼音引擎实例
+let engine: PinyinEngine | null = null
 
-// 候选词列表
-const candidates = ref<string[]>([])
+const pinyinState = ref<PinyinState | null>(null)
 
-watchEffect(async () => {
-  candidates.value = await inputEngine.processInput(currentPinyin.value)
-})
-
-const visibleCandidates = computed(() => candidates.value.slice(0, 30))
+const candidates = computed(() => pinyinState.value?.candidates.map(c => c.text) ?? [])
 
 const isSelectionOpen = ref(false)
 
-// 选择候选词
-function handleSelection(selected: string) {
-  inputEngine.selectCandidate(selected)
-  emit('input', selected)
-  currentPinyin.value = ''
-  isSelectionOpen.value = false
+onMounted(async () => {
+  engine = getPinyinEngine()
+  if (!engine) {
+    throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
+  }
+
+  // 引擎就绪后，若已有拼音输入则立即处理
+  if (currentPinyin.value) {
+    pinyinState.value = await engine.processInput(currentPinyin.value)
+  }
+})
+
+onUnmounted(() => {
+  engine?.clearInput()
+  engine = null
+})
+
+watch(currentPinyin, async (newVal) => {
+  const eng = engine
+  if (!eng)
+    return
+
+  if (newVal === '') {
+    eng.clearInput()
+    pinyinState.value = null
+    return
+  }
+
+  pinyinState.value = await eng.processInput(newVal)
+})
+
+async function handleSelection(globalIndex: number) {
+  if (!engine)
+    return
+
+  const state = await engine.pickCandidate(globalIndex)
+  pinyinState.value = state
+
+  if (!state.preeditBody) {
+    emit('input', state.committed || '')
+    currentPinyin.value = ''
+    pinyinState.value = null
+    isSelectionOpen.value = false
+  }
+  // 选词后仍有未完成的拼音输入
 }
+
+defineExpose({
+  handleSelection,
+})
+
+const showedPinyin = computed(() => {
+  const state = pinyinState.value
+  if (!state)
+    return ''
+  return state.preeditHead + state.preeditBody
+})
 </script>
 
 <template>
   <div class="zhk-candidate">
     <div class="zhk-candidate__container">
       <!-- 输入拼音显示 -->
-      <div v-if="currentPinyin" class="zhk-candidate__pinyin">
-        {{ currentPinyin }}
+      <div v-if="showedPinyin" class="zhk-candidate__pinyin">
+        {{ showedPinyin }}
       </div>
 
       <div class="zhk-candidate__bottom-container">
         <!-- 候选词列表 -->
         <CandidateList
           v-if="candidates.length > 0"
-          :candidates="visibleCandidates"
+          :candidates="candidates"
           @select="handleSelection"
         />
         <button
@@ -63,7 +109,7 @@ function handleSelection(selected: string) {
       </div>
     </div>
     <CandidateSelection
-      v-show="isSelectionOpen"
+      v-if="isSelectionOpen"
       :candidates="candidates"
       @select="handleSelection"
       @close="isSelectionOpen = false"

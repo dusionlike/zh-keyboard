@@ -36,9 +36,6 @@
     "build": "tsdown",
     "test": "vitest run"
   },
-  "dependencies": {
-    "dexie": "^4.0.11"
-  },
   "devDependencies": {
     "tsdown": "^0.11.1",
     "typescript": "^5.0.0",

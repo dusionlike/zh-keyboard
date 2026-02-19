@@ -48,6 +48,7 @@
   "dependencies": {
     "@reactuses/core": "^6.0.3",
     "@zh-keyboard/core": "workspace:*",
+    "@zh-keyboard/pinyin": "workspace:*",
     "@zh-keyboard/recognizer": "workspace:*",
     "classnames": "^2.5.1"
   },

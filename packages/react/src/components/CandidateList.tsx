@@ -3,21 +3,17 @@ import '../styles/CandidateList.scss'
 
 interface CandidateListProps {
   candidates: string[]
-  onSelect: (candidate: string) => void
+  onSelect: (index: number) => void
 }
 
 const CandidateList: React.FC<CandidateListProps> = ({ candidates, onSelect }) => {
-  function handleSelect(candidate: string) {
-    onSelect(candidate)
-  }
-
   return (
     <div className="zhk-candidate-list">
-      {candidates.map(candidate => (
+      {candidates.map((candidate, index) => (
         <button
-          key={`candidate-${candidate}`}
+          key={candidate}
           className="zhk-candidate-list__item"
-          onClick={() => handleSelect(candidate)}
+          onClick={() => onSelect(index)}
         >
           {candidate}
         </button>

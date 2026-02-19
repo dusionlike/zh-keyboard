@@ -1,4 +1,5 @@
 import type { HandwritingRecognizer } from './handwriting'
+import type { PinyinEngine } from './pinyin-engine'
 
 /**
  * 键盘配置类型
@@ -24,6 +25,12 @@ export interface KeyboardConfig {
    * 数字键盘的行配置
    */
   numKeys?: string[][]
+  /**
+   * RIME WASM 文件及数据文件的 URL 或路径前缀。
+   * 用于默认 RIME 引擎加载（当未通过 registerPinyinEngine 注册自定义引擎时）。
+   * @default '/rime'
+   */
+  wasmDir?: string
 }
 
 // 全局配置对象
@@ -36,6 +43,9 @@ let globalConfig: KeyboardConfig = {
 
 // 全局变量用于存储手写识别服务实例
 let handwritingRecognizerInstance: HandwritingRecognizer | null = null
+
+// 全局变量用于存储拼音引擎实例
+let pinyinEngineInstance: PinyinEngine | null = null
 
 /**
  * 获取全局键盘配置
@@ -68,4 +78,22 @@ export function registerHandwritingRecognizer(recognizer: HandwritingRecognizer)
  */
 export function getHandwritingRecognizer(): HandwritingRecognizer | null {
   return handwritingRecognizerInstance
+}
+
+/**
+ * 注册拼音引擎。
+ * 注册后，CandidateBar 将使用此引擎而非默认的 RIME 引擎。
+ * 适用于自定义引擎或 Worker 中运行的引擎。
+ * @param engine 拼音引擎实现
+ */
+export function registerPinyinEngine(engine: PinyinEngine): void {
+  pinyinEngineInstance = engine
+}
+
+/**
+ * 获取已注册的拼音引擎实例
+ * @returns 拼音引擎实例，未注册时返回 null
+ */
+export function getPinyinEngine(): PinyinEngine | null {
+  return pinyinEngineInstance
 }

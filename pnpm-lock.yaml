@@ -27,18 +27,27 @@ importers:
       '@antfu/eslint-config':
         specifier: ^4.12.0
         version: 4.12.0(@eslint-react/eslint-plugin@1.50.0(eslint@9.27.0(jiti@2.4.2))(ts-api-utils@2.1.0(typescript@5.8.3))(typescript@5.8.3))(@typescript-eslint/utils@8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3))(@vue/compiler-sfc@3.5.13)(eslint-plugin-react-hooks@5.2.0(eslint@9.27.0(jiti@2.4.2)))(eslint-plugin-react-refresh@0.4.20(eslint@9.27.0(jiti@2.4.2)))(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3)(vitest@1.6.1(@types/node@18.19.86)(sass-embedded@1.86.3)(sass@1.89.0))
+      '@playwright/test':
+        specifier: ^1.50.0
+        version: 1.58.2
       '@types/node':
         specifier: '18'
         version: 18.19.86
 
   examples:
     dependencies:
+      '@zh-keyboard/pinyin':
+        specifier: workspace:*
+        version: link:../packages/pinyin
       '@zh-keyboard/recognizer':
         specifier: workspace:*
         version: link:../packages/recognizer
       '@zh-keyboard/vue':
         specifier: workspace:*
         version: link:../packages/vue
+      comlink:
+        specifier: ^4.4.2
+        version: 4.4.2
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -60,10 +69,6 @@ importers:
         version: 2.2.8(typescript@5.8.3)
 
   packages/core:
-    dependencies:
-      dexie:
-        specifier: ^4.0.11
-        version: 4.0.11
     devDependencies:
       tsdown:
         specifier: ^0.11.1
@@ -71,6 +76,22 @@ importers:
       typescript:
         specifier: ^5.0.0
         version: 5.7.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@22.14.1)(sass-embedded@1.86.3)(sass@1.89.0)
+
+  packages/pinyin:
+    dependencies:
+      '@zh-keyboard/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      tsdown:
+        specifier: ^0.11.1
+        version: 0.11.1(typescript@5.8.3)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
       vitest:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@22.14.1)(sass-embedded@1.86.3)(sass@1.89.0)
@@ -83,6 +104,9 @@ importers:
       '@zh-keyboard/core':
         specifier: workspace:*
         version: link:../core
+      '@zh-keyboard/pinyin':
+        specifier: workspace:*
+        version: link:../pinyin
       '@zh-keyboard/recognizer':
         specifier: workspace:*
         version: link:../recognizer
@@ -151,6 +175,9 @@ importers:
       '@zh-keyboard/core':
         specifier: workspace:*
         version: link:../core
+      '@zh-keyboard/pinyin':
+        specifier: workspace:*
+        version: link:../pinyin
       '@zh-keyboard/recognizer':
         specifier: workspace:*
         version: link:../recognizer
@@ -986,6 +1013,11 @@ packages:
     resolution: {integrity: sha512-ROFF39F6ZrnzSUEmQQZUar0Jt4xVoP9WnDRdWwF4NNcXs3xBTLgBUDoOwW141y1jP+S8nahIbdxbFC7IShw9Iw==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
+  '@playwright/test@1.58.2':
+    resolution: {integrity: sha512-akea+6bHYBBfA9uQqSYmlJXn61cTa+jbO87xVLCWbTqbWadRVmhxlXATaOjOgcBaWU4ePo0wB41KMFv3o35IXA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   '@quansync/fs@0.1.2':
     resolution: {integrity: sha512-ezIadUb1aFhwJLd++WVqVpi9rnlX8vnd4ju7saPhwLHJN1mJgOv0puePTGV+FbtSnWtwoHDT8lAm4kagDZmpCg==}
     engines: {node: '>=20.0.0'}
@@ -1768,6 +1800,9 @@ packages:
   colorjs.io@0.5.2:
     resolution: {integrity: sha512-twmVoizEW7ylZSN32OgKdXRmo1qg+wT5/6C3xu5b9QsWzSFAhHLn2xd8ro0diCsKfCj1RdaTP/nrcW+vAoQPIw==}
 
+  comlink@4.4.2:
+    resolution: {integrity: sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==}
+
   comment-parser@1.4.1:
     resolution: {integrity: sha512-buhp5kePrmda3vhc5B9t7pUQXAb2Tnd0qgpkIhPhkHXxJpiPJ11H0ZEU0oBpJ2QztSbzG/ZxMj/CHsYJqRHmyg==}
     engines: {node: '>= 12.0.0'}
@@ -2261,6 +2296,11 @@ packages:
   fs-extra@11.3.0:
     resolution: {integrity: sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew==}
     engines: {node: '>=14.14'}
+
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -2822,6 +2862,16 @@ packages:
 
   pkg-types@2.1.0:
     resolution: {integrity: sha512-wmJwA+8ihJixSoHKxZJRBQG1oY8Yr9pGLzRmSsNms0iNWyHHAlZCa7mmKiFR10YPZuz/2k169JiS/inOjBCZ2A==}
+
+  playwright-core@1.58.2:
+    resolution: {integrity: sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.58.2:
+    resolution: {integrity: sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -4321,6 +4371,10 @@ snapshots:
 
   '@pkgr/core@0.2.4': {}
 
+  '@playwright/test@1.58.2':
+    dependencies:
+      playwright: 1.58.2
+
   '@quansync/fs@0.1.2':
     dependencies:
       quansync: 0.2.10
@@ -5185,6 +5239,8 @@ snapshots:
 
   colorjs.io@0.5.2: {}
 
+  comlink@4.4.2: {}
+
   comment-parser@1.4.1: {}
 
   compare-versions@6.1.1: {}
@@ -5835,6 +5891,9 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 6.1.0
       universalify: 2.0.1
+
+  fsevents@2.3.2:
+    optional: true
 
   fsevents@2.3.3:
     optional: true
@@ -6520,6 +6579,14 @@ snapshots:
       exsolve: 1.0.4
       pathe: 2.0.3
 
+  playwright-core@1.58.2: {}
+
+  playwright@1.58.2:
+    dependencies:
+      playwright-core: 1.58.2
+    optionalDependencies:
+      fsevents: 2.3.2
+
   pluralize@8.0.0: {}
 
   pnpm-workspace-yaml@0.3.1:
@@ -6635,6 +6702,21 @@ snapshots:
       rolldown: 1.0.0-beta.8-commit.534fde3
     optionalDependencies:
       typescript: 5.7.3
+    transitivePeerDependencies:
+      - supports-color
+
+  rolldown-plugin-dts@0.11.3(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.8.3):
+    dependencies:
+      '@babel/generator': 7.27.1
+      '@babel/parser': 7.27.2
+      '@babel/types': 7.27.1
+      ast-kit: 2.0.0
+      debug: 4.4.0
+      dts-resolver: 1.1.2
+      get-tsconfig: 4.10.0
+      rolldown: 1.0.0-beta.8-commit.534fde3
+    optionalDependencies:
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -6956,6 +7038,26 @@ snapshots:
       hookable: 5.5.3
       rolldown: 1.0.0-beta.8-commit.534fde3
       rolldown-plugin-dts: 0.11.3(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.7.3)
+      semver: 7.7.1
+      tinyexec: 1.0.1
+      tinyglobby: 0.2.13
+      unconfig: 7.3.2
+    transitivePeerDependencies:
+      - '@oxc-project/runtime'
+      - supports-color
+      - typescript
+
+  tsdown@0.11.1(typescript@5.8.3):
+    dependencies:
+      ansis: 3.17.0
+      cac: 6.7.14
+      chokidar: 4.0.3
+      debug: 4.4.0
+      diff: 7.0.0
+      empathic: 1.1.0
+      hookable: 5.5.3
+      rolldown: 1.0.0-beta.8-commit.534fde3
+      rolldown-plugin-dts: 0.11.3(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.8.3)
       semver: 7.7.1
       tinyexec: 1.0.1
       tinyglobby: 0.2.13

@@ -6,11 +6,11 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', candidate: string): void
+  (e: 'select', index: number): void
 }>()
 
-function handleSelect(candidate: string) {
-  emit('select', candidate)
+function handleSelect(index: number) {
+  emit('select', index)
 }
 </script>
 
@@ -20,7 +20,7 @@ function handleSelect(candidate: string) {
       v-for="(candidate, index) in candidates"
       :key="`candidate-${index}`"
       class="zhk-candidate-list__item"
-      @click="handleSelect(candidate)"
+      @click="handleSelect(index)"
     >
       {{ candidate }}
     </button>

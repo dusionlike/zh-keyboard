@@ -1,5 +1,6 @@
 import type { KeyBoardMode, KeyEvent } from '../types'
-import React, { useMemo, useState } from 'react'
+import type { CandidateBarRef } from './CandidateBar'
+import React, { useMemo, useRef, useState } from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardCaps from '../assets/icons/keyboard-caps.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
@@ -18,6 +19,7 @@ interface KeyboardBaseProps {
 const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, onKey, setMode }) => {
   const [isUpperCase, setIsUpperCase] = useState(false)
   const [pinyin, setPinyin] = useState('')
+  const candidateBarRef = useRef<CandidateBarRef>(null)
 
   const { startRepeat, stopRepeat } = useKeyRepeater()
 
@@ -59,6 +61,23 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
     handleSpecialKey('delete', true)
   }
 
+  function handleSpace() {
+    if (mode === 'zh' && pinyin) {
+      candidateBarRef.current?.handleSelection(0)
+      return
+    }
+    handleSpecialKey(' ')
+  }
+
+  function handleEnter() {
+    if (mode === 'zh' && pinyin) {
+      handleSpecialKey(pinyin)
+      setPinyin('')
+      return
+    }
+    handleSpecialKey('enter', true)
+  }
+
   function handleKeyPress(key: string) {
     if (mode === 'zh') {
       setPinyin(pinyin + key)
@@ -92,6 +111,7 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
         {mode === 'zh'
           ? (
               <CandidateBar
+                ref={candidateBarRef}
                 currentPinyin={pinyin}
                 onInput={e => handleSpecialKey(e, false)}
                 onKey={onKey}
@@ -184,7 +204,7 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
         </button>
         <button
           className="zhk-base__key zhk-base__key--space"
-          onPointerDown={e => startRepeat(e, () => handleSpecialKey(' '))}
+          onPointerDown={e => startRepeat(e, () => handleSpace())}
           onPointerUp={stopRepeat}
           onPointerLeave={stopRepeat}
           onPointerCancel={stopRepeat}
@@ -211,7 +231,7 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
         </button>
         <button
           className="zhk-base__key zhk-base__key--function"
-          onPointerDown={e => startRepeat(e, () => handleSpecialKey('enter', true))}
+          onPointerDown={e => startRepeat(e, () => handleEnter())}
           onPointerUp={stopRepeat}
           onPointerLeave={stopRepeat}
           onPointerCancel={stopRepeat}

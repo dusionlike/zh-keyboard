@@ -58,6 +58,7 @@ const keyboardRows = [
 ]
 
 const pinyin = ref('')
+const candidateBarRef = ref<InstanceType<typeof CandidateBar> | null>(null)
 
 const { startRepeat, stopRepeat } = useKeyRepeater()
 
@@ -68,6 +69,23 @@ function handleDelete() {
     return
   }
   handleSpecialKey('delete', true)
+}
+
+function handleSpace() {
+  if (mode.value === 'zh' && pinyin.value) {
+    candidateBarRef.value?.handleSelection(0)
+    return
+  }
+  handleSpecialKey(' ')
+}
+
+function handleEnter() {
+  if (mode.value === 'zh' && pinyin.value) {
+    handleSpecialKey(pinyin.value)
+    pinyin.value = ''
+    return
+  }
+  handleSpecialKey('enter', true)
 }
 
 function handleKeyPress(key: string) {
@@ -103,6 +121,7 @@ const isHandwritingButtonDisabled = computed(() => {
     <div class="zhk-base__row">
       <CandidateBar
         v-if="mode === 'zh'"
+        ref="candidateBarRef"
         v-model="pinyin"
         @input="e => handleSpecialKey(e, false)"
       />
@@ -188,7 +207,7 @@ const isHandwritingButtonDisabled = computed(() => {
       </button>
       <button
         class="zhk-base__key zhk-base__key--space"
-        @pointerdown="(e) => startRepeat(e, () => handleSpecialKey(' '))"
+        @pointerdown="(e) => startRepeat(e, () => handleSpace())"
         @pointerup="stopRepeat"
         @pointerleave="stopRepeat"
         @pointercancel="stopRepeat"
@@ -212,7 +231,7 @@ const isHandwritingButtonDisabled = computed(() => {
       </button>
       <button
         class="zhk-base__key zhk-base__key--function"
-        @pointerdown="(e) => startRepeat(e, () => handleSpecialKey('enter', true))"
+        @pointerdown="(e) => startRepeat(e, () => handleEnter())"
         @pointerup="stopRepeat"
         @pointerleave="stopRepeat"
         @pointercancel="stopRepeat"

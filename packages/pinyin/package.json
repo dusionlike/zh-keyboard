@@ -1,0 +1,49 @@
+{
+  "name": "@zh-keyboard/pinyin",
+  "version": "0.5.1",
+  "description": "中文虚拟键盘组件库拼音输入引擎",
+  "author": "dusionlike",
+  "license": "Apache 2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dusionlike/zh-keyboard",
+    "directory": "packages/pinyin"
+  },
+  "bugs": {
+    "url": "https://github.com/dusionlike/zh-keyboard/issues"
+  },
+  "keywords": [
+    "keyboard",
+    "chinese",
+    "virtual-keyboard",
+    "pinyin",
+    "engine"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "data",
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@zh-keyboard/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "^0.11.1",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

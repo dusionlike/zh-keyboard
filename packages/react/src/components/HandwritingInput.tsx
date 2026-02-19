@@ -77,7 +77,10 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
     canvasDrawer.current.clearCanvas()
   }
 
-  function handleSelection(candidate: string) {
+  function handleSelection(index: number) {
+    const candidate = candidates[index]
+    if (!candidate)
+      return
     onKey({ key: candidate })
     setCandidates([])
     clearCanvas()
