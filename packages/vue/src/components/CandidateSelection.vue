@@ -16,7 +16,7 @@ function closeModal() {
 }
 
 function getNumberCount(candidate: string) {
-  const length = candidate.length
+  const length = Array.from(candidate).length
   if (length >= 2 && length <= 3) {
     return 2
   } else if (length >= 4) {
