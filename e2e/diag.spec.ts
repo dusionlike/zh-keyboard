@@ -5,10 +5,10 @@ test('diagnostic', async ({ page }) => {
   const errors: string[] = []
 
   page.on('console', (msg) => {
-    logs.push(msg.type() + ': ' + msg.text())
+    logs.push(`${msg.type()}: ${msg.text()}`)
   })
   page.on('pageerror', (err) => {
-    errors.push('PAGE ERROR: ' + err.message)
+    errors.push(`PAGE ERROR: ${err.message}`)
   })
 
   await page.goto('http://localhost:5174/')
@@ -41,7 +41,7 @@ test('diagnostic', async ({ page }) => {
   const candidateBarHtml = await page.locator('.zhk-candidate').innerHTML().catch(() => 'not found')
   console.log('Candidate bar html (first 300):', candidateBarHtml.slice(0, 300))
 
-  console.log('\n=== Console logs (' + logs.length + ' total) ===')
+  console.log(`\n=== Console logs (${logs.length} total) ===`)
   logs.forEach((l) => {
     if (!l.includes('[vite]') && !l.includes('Download the React DevTools'))
       console.log(l)

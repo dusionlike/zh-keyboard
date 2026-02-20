@@ -13,10 +13,9 @@ interface KeyboardBaseProps {
   mode: KeyBoardMode
   onKey: (payload: KeyEvent) => void
   setMode: (mode: KeyBoardMode) => void
-  wasmDir?: string
 }
 
-const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, onKey, setMode, wasmDir }) => {
+const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, onKey, setMode }) => {
   const [isUpperCase, setIsUpperCase] = useState(false)
   const [pinyin, setPinyin] = useState('')
 
@@ -97,7 +96,6 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
                 onInput={e => handleSpecialKey(e, false)}
                 onKey={onKey}
                 setCurrentPinyin={setPinyin}
-                wasmDir={wasmDir}
               />
             )
           : (

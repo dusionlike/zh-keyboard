@@ -39,7 +39,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "dexie": "^4.0.11"
+    "@zh-keyboard/core": "workspace:*"
   },
   "devDependencies": {
     "tsdown": "^0.11.1",

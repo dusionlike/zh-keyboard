@@ -3,12 +3,12 @@ import '../styles/CandidateSelection.scss'
 
 defineProps<{ candidates: string[] }>()
 const emit = defineEmits<{
-  (e: 'select', candidate: string): void
+  (e: 'select', index: number): void
   (e: 'close'): void
 }>()
 
-function selectCandidate(candidate: string) {
-  emit('select', candidate)
+function selectCandidate(index: number) {
+  emit('select', index)
 }
 
 function closeModal() {
@@ -19,7 +19,7 @@ function closeModal() {
 <template>
   <div class="zhk-selection">
     <div class="zhk-selection__list">
-      <div v-for="(candidate, index) in candidates" :key="index" class="zhk-selection__text" @click="selectCandidate(candidate)">
+      <div v-for="(candidate, index) in candidates" :key="index" class="zhk-selection__text" @click="selectCandidate(index)">
         {{ candidate }}
       </div>
     </div>

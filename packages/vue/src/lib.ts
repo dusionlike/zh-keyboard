@@ -4,7 +4,9 @@ import ZhKeyboard from './components/ZhKeyboard.vue'
 export {
   getHandwritingRecognizer,
   getKeyboardConfig,
+  getPinyinEngine,
   registerHandwritingRecognizer,
+  registerPinyinEngine,
   setKeyboardConfig,
 } from '@zh-keyboard/core'
 

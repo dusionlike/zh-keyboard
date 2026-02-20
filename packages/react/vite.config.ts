@@ -1,6 +1,6 @@
+import type { Plugin } from 'vite'
 import { createReadStream, existsSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
-import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
@@ -27,8 +27,7 @@ function serveRimeDataPlugin(): Plugin {
           const ext = filePath.slice(filePath.lastIndexOf('.'))
           res.setHeader('Content-Type', mimeTypes[ext] ?? 'application/octet-stream')
           createReadStream(filePath).pipe(res)
-        }
-        else {
+        } else {
           next()
         }
       })
@@ -45,8 +44,7 @@ export default defineConfig((env) => {
       },
       plugins: [react(), serveRimeDataPlugin()],
     }
-  }
-  else {
+  } else {
     return {
       plugins: [
         react(),

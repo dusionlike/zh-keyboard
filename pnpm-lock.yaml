@@ -63,10 +63,6 @@ importers:
         version: 2.2.8(typescript@5.8.3)
 
   packages/core:
-    dependencies:
-      dexie:
-        specifier: ^4.0.11
-        version: 4.0.11
     devDependencies:
       tsdown:
         specifier: ^0.11.1
@@ -80,9 +76,9 @@ importers:
 
   packages/pinyin:
     dependencies:
-      dexie:
-        specifier: ^4.0.11
-        version: 4.0.11
+      '@zh-keyboard/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       tsdown:
         specifier: ^0.11.1

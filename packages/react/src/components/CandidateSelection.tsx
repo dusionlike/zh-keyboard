@@ -3,30 +3,22 @@ import '../styles/CandidateSelection.scss'
 
 interface CandidateSelectionProps {
   candidates: string[]
-  onSelect: (candidate: string) => void
+  onSelect: (index: number) => void
   onClose: () => void
 }
 
 const CandidateSelection: React.FC<CandidateSelectionProps> = ({ candidates, onSelect, onClose }) => {
-  function selectCandidate(candidate: string) {
-    onSelect(candidate)
-  }
-
-  function closeModal() {
-    onClose()
-  }
-
   return (
     <div className="zhk-selection">
       <div className="zhk-selection__list">
-        {candidates.map(candidate => (
-          <div key={candidate} className="zhk-selection__text" onClick={() => selectCandidate(candidate)}>
+        {candidates.map((candidate, index) => (
+          <div key={index} className="zhk-selection__text" onClick={() => onSelect(index)}>
             {candidate}
           </div>
         ))}
       </div>
       <div className="zhk-selection__func">
-        <button className="zhk-selection__func-btn" onClick={closeModal}>
+        <button className="zhk-selection__func-btn" onClick={onClose}>
           返回
         </button>
       </div>

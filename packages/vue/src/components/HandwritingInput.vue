@@ -90,7 +90,10 @@ watchEffect(() => {
   }
 })
 
-function handleSelection(candidate: string) {
+function handleSelection(index: number) {
+  const candidate = candidates.value[index]
+  if (!candidate)
+    return
   emit('key', { key: candidate })
   candidates.value = []
   clearCanvas()
