@@ -92,7 +92,7 @@ async function handleSelection(globalIndex: number) {
       </div>
 
       <div class="zhk-candidate__bottom-container">
-        <!-- 候选词列表（全量展示） -->
+        <!-- 候选词列表 -->
         <CandidateList
           v-if="candidates.length > 0"
           :candidates="candidates"
@@ -108,7 +108,7 @@ async function handleSelection(globalIndex: number) {
       </div>
     </div>
     <CandidateSelection
-      v-show="isSelectionOpen"
+      v-if="isSelectionOpen"
       :candidates="candidates"
       @select="handleSelection"
       @close="isSelectionOpen = false"

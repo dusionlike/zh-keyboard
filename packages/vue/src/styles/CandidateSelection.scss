@@ -59,6 +59,14 @@ $background-color: #f5f5f5;
       background-color: var(--hover-key-color, #f0f0f0);
       z-index: 1;
     }
+
+    &--span-2 {
+      grid-column: span 2;
+    }
+
+    &--span-3 {
+      grid-column: span 3;
+    }
   }
 
   &__func {

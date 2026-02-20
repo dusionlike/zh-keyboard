@@ -14,12 +14,28 @@ function selectCandidate(index: number) {
 function closeModal() {
   emit('close')
 }
+
+function getNumberCount(candidate: string) {
+  const length = candidate.length
+  if (length >= 2 && length <= 3) {
+    return 2
+  } else if (length >= 4) {
+    return 3
+  }
+  return 1
+}
 </script>
 
 <template>
   <div class="zhk-selection">
     <div class="zhk-selection__list">
-      <div v-for="(candidate, index) in candidates" :key="index" class="zhk-selection__text" @click="selectCandidate(index)">
+      <div
+        v-for="(candidate, index) in candidates"
+        :key="index"
+        class="zhk-selection__text"
+        :class="[`zhk-selection__text--span-${getNumberCount(candidate)}`]"
+        @click="selectCandidate(index)"
+      >
         {{ candidate }}
       </div>
     </div>

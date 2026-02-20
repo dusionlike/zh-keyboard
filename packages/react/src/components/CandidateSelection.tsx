@@ -8,11 +8,21 @@ interface CandidateSelectionProps {
 }
 
 const CandidateSelection: React.FC<CandidateSelectionProps> = ({ candidates, onSelect, onClose }) => {
+  function getNumberCount(candidate: string) {
+    const length = candidate.length
+    if (length >= 2 && length <= 3) {
+      return 2
+    } else if (length >= 4) {
+      return 3
+    }
+    return 1
+  }
+
   return (
     <div className="zhk-selection">
       <div className="zhk-selection__list">
         {candidates.map((candidate, index) => (
-          <div key={candidate} className="zhk-selection__text" onClick={() => onSelect(index)}>
+          <div key={candidate} className={`zhk-selection__text zhk-selection__text--span-${getNumberCount(candidate)}`} onClick={() => onSelect(index)}>
             {candidate}
           </div>
         ))}
