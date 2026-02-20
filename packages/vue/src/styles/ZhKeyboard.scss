@@ -1,13 +1,15 @@
-$primary-color: #4CAF50;
-$primary-hover-color: #3e8e41;
-$background-color: #f5f5f5;
-$key-background-color: #fff;
-$key-text-color: #333;
-$function-key-color: #e6e6e6;
-$border-color: #dcdcdc;
-$border-radius: 8px;
-$key-border-radius: 5px;
+$primary-color: #0076f5;
+$primary-hover-color: #005bb7;
+$background-color: #f7f8f9;
+$key-background-color: #ffffff;
+$key-text-color: #333333;
+$function-key-color: #e4e7ea;
+$border-color: #d1d5da;
+$border-radius: 12px;
+$key-border-radius: 6px;
 $box-shadow-color: rgba(0, 0, 0, 0.1);
+$key-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+$key-active-shadow: 0 0px 1px rgba(0, 0, 0, 0.05);
 
 .zhk {
   --key-font-size: max(1rem, calc(var(--keyboard-height) / 20));
@@ -17,6 +19,8 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
   --key-width: calc((100% - 9 * var(--gap)) / 10);
   --key-min-width-function: 45px;
   --key-icon-size: calc(var(--key-font-size) * 1.2);
+  --key-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --key-active-shadow: 0 0px 1px rgba(0, 0, 0, 0.05);
 
   position: relative;
   width: 400px;
@@ -27,8 +31,8 @@ $box-shadow-color: rgba(0, 0, 0, 0.1);
   overflow: hidden;
   background-color: $background-color;
   border-radius: $border-radius;
-  box-shadow: 0 2px 10px $box-shadow-color;
-  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  font-family: "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif;
   user-select: none;
 
   &--disabled {
