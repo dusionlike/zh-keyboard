@@ -16,14 +16,26 @@
   &__item {
     font-size: var(--candidate-font-size);
     min-width: var(--candidate-font-size);
-    padding: 0 calc(var(--candidate-font-size) * 0.2);
+    padding: 0 calc(var(--candidate-font-size) * 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: transparent;
     border: none;
+    color: var(--key-text-color, #333333);
     cursor: pointer;
     white-space: nowrap; // 确保候选项不换行
     flex-shrink: 0; // 防止在flex容器中被压缩
+    transition: all 0.1s ease;
+    border-radius: 4px;
+
+    &:first-child {
+      color: var(--primary-color, #0076f5);
+      font-weight: 500;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
   }
 }
