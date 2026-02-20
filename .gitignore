@@ -21,3 +21,5 @@ release*
 *.njsproj
 *.sln
 *.sw?
+
+test-results

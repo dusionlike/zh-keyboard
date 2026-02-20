@@ -34,6 +34,11 @@ const props = withDefaults(defineProps<{
    * 数字键盘的行配置
    */
   numKeys?: string[][]
+  /**
+   * RIME WASM 文件的 URL 或路径前缀
+   * @default '/rime'
+   */
+  wasmDir?: string
 }>(), {
   defaultMode: getKeyboardConfig().defaultMode ?? 'en' as const,
   enableHandwriting: getKeyboardConfig().enableHandwriting ?? false,
@@ -192,6 +197,7 @@ function handleRecognize(results: string[]) {
         v-else-if="mode === 'en' || mode === 'zh'"
         v-model="mode"
         :enable-handwriting="enableHandwriting"
+        :wasm-dir="wasmDir"
         @key="handleKeyEvent"
       />
     </template>

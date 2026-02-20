@@ -21,6 +21,7 @@ interface ZhKeyboardProps {
   className?: string
   style?: React.CSSProperties
   numKeys?: string[][]
+  wasmDir?: string
 }
 
 const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
@@ -32,6 +33,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
   className,
   style,
   numKeys,
+  wasmDir,
 }) => {
   const [mode, setMode] = useState<KeyBoardMode>(defaultMode)
   const previousModeRef = useRef<KeyBoardMode>(defaultMode)
@@ -191,6 +193,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
                   mode={mode}
                   setMode={setMode}
                   enableHandwriting={enableHandwriting}
+                  wasmDir={wasmDir}
                   onKey={handleKeyEvent}
                 />
               )}

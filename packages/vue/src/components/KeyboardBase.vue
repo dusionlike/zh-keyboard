@@ -7,6 +7,7 @@ import '../styles/KeyboardBase.scss'
 
 const props = defineProps<{
   enableHandwriting?: boolean
+  wasmDir?: string
 }>()
 
 const emit = defineEmits<{
@@ -104,6 +105,7 @@ const isHandwritingButtonDisabled = computed(() => {
       <CandidateBar
         v-if="mode === 'zh'"
         v-model="pinyin"
+        :wasm-dir="props.wasmDir"
         @input="e => handleSpecialKey(e, false)"
       />
       <template v-else>
