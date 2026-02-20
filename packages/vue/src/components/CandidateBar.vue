@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PinyinEngine } from '@zh-keyboard/core'
+import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
 import { getKeyboardConfig, getPinyinEngine } from '@zh-keyboard/core'
 import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
@@ -17,23 +17,15 @@ const currentPinyin = defineModel<string>({
   required: true,
 })
 
-const segmentedPinyin = ref('')
-
-watch(currentPinyin, (val) => {
-  if (!val) {
-    segmentedPinyin.value = ''
-  }
-})
-
-const showedPinyin = computed(() => segmentedPinyin.value || currentPinyin.value)
-
 // 拼音引擎实例
 let engine: PinyinEngine | null = null
 // 标记引擎是否由本组件创建（外部注册的引擎不由本组件销毁）
 let engineIsOwned = false
 
-// 候选词列表（全量）
-const candidates = ref<string[]>([])
+const pinyinState = ref<PinyinState | null>(null)
+
+const candidates = computed(() => pinyinState.value?.candidates.map(c => c.text) ?? [])
+
 const isSelectionOpen = ref(false)
 
 onMounted(async () => {
@@ -49,9 +41,7 @@ onMounted(async () => {
 
   // 引擎就绪后，若已有拼音输入则立即处理
   if (currentPinyin.value) {
-    const result = await engine.processInput(currentPinyin.value)
-    candidates.value = result.candidates
-    segmentedPinyin.value = result.segmentedPinyin
+    pinyinState.value = await engine.processInput(currentPinyin.value)
   }
 })
 
@@ -69,31 +59,39 @@ watch(currentPinyin, async (newVal) => {
 
   if (newVal === '') {
     eng.clearInput()
-    candidates.value = []
+    pinyinState.value = null
     return
   }
 
-  const result = await eng.processInput(newVal)
-  candidates.value = result.candidates
-  segmentedPinyin.value = result.segmentedPinyin
+  pinyinState.value = await eng.processInput(newVal)
 })
 
 async function handleSelection(globalIndex: number) {
-  const eng = engine
-  if (!eng)
+  if (!engine)
     return
 
-  const result = await eng.pickCandidate(globalIndex)
-  const committed = result
+  const state = await engine.pickCandidate(globalIndex)
+  pinyinState.value = state
 
-  if (committed) {
-    emit('input', committed)
+  if (!state.preeditBody) {
+    emit('input', state.committed || '')
+    currentPinyin.value = ''
+    pinyinState.value = null
+    isSelectionOpen.value = false
   }
-
-  currentPinyin.value = ''
-  segmentedPinyin.value = ''
-  isSelectionOpen.value = false
+  // 选词后仍有未完成的拼音输入
 }
+
+defineExpose({
+  handleSelection,
+})
+
+const showedPinyin = computed(() => {
+  const state = pinyinState.value
+  if (!state)
+    return ''
+  return state.preeditHead + state.preeditBody
+})
 </script>
 
 <template>

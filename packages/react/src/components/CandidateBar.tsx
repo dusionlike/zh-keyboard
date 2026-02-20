@@ -1,8 +1,8 @@
-import type { PinyinEngine } from '@zh-keyboard/core'
+import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
 import { getKeyboardConfig, getPinyinEngine } from '@zh-keyboard/core'
 import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import chevronRight from '../assets/icons/chevron-right.svg'
 import CandidateList from './CandidateList'
 import CandidateSelection from './CandidateSelection'
@@ -15,26 +15,32 @@ interface CandidateBarProps {
   setCurrentPinyin: (pinyin: string) => void
 }
 
-const CandidateBar: React.FC<CandidateBarProps> = ({
+export interface CandidateBarRef {
+  handleSelection: (globalIndex: number) => Promise<void>
+}
+
+const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
   currentPinyin,
   onInput,
   setCurrentPinyin,
-}) => {
+}, ref) => {
   const engineRef = useRef<PinyinEngine | null>(null)
   const engineIsOwnedRef = useRef(false)
   const [engineReady, setEngineReady] = useState(false)
-  const [candidates, setCandidates] = useState<string[]>([])
+  const [pinyinState, setPinyinState] = useState<PinyinState | null>(null)
   const [isSelectionOpen, setIsSelectionOpen] = useState(false)
 
-  const [segmentedPinyin, setSegmentedPinyin] = useState('')
+  const candidates = useMemo(() => pinyinState?.candidates.map(c => c.text) ?? [], [pinyinState])
 
-  useLayoutEffect(() => {
-    if (!currentPinyin) {
-      setSegmentedPinyin('')
-    }
-  }, [currentPinyin])
+  const showedPinyin = useMemo(() => {
+    if (!pinyinState)
+      return ''
+    return pinyinState.preeditHead + pinyinState.preeditBody
+  }, [pinyinState])
 
-  const showedPinyin = useMemo(() => segmentedPinyin || currentPinyin, [segmentedPinyin, currentPinyin])
+  useImperativeHandle(ref, () => ({
+    handleSelection,
+  }))
 
   // 初始化引擎（仅执行一次）
   useLayoutEffect(() => {
@@ -54,6 +60,9 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
           engineRef.current = eng
           engineIsOwnedRef.current = true
           setEngineReady(true)
+          if (currentPinyin) {
+            eng.processInput(currentPinyin).then(state => setPinyinState(state))
+          }
         } else {
           eng.destroy()
         }
@@ -68,7 +77,7 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
       engineRef.current = null
       setEngineReady(false)
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 处理拼音变化
   useLayoutEffect(() => {
@@ -78,14 +87,13 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
 
     if (currentPinyin === '') {
       eng.clearInput()
-      setCandidates([])
+      setPinyinState(null)
       return
     }
 
     (async () => {
-      const result = await eng.processInput(currentPinyin)
-      setCandidates(result.candidates)
-      setSegmentedPinyin(result.segmentedPinyin)
+      const state = await eng.processInput(currentPinyin)
+      setPinyinState(state)
     })()
   }, [currentPinyin, engineReady])
 
@@ -94,15 +102,15 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
     if (!eng)
       return
 
-    const committed = await eng.pickCandidate(globalIndex)
+    const state = await eng.pickCandidate(globalIndex)
+    setPinyinState(state)
 
-    if (committed) {
-      onInput(committed)
+    if (!state.preeditBody) {
+      onInput(state.committed || '')
+      setCurrentPinyin('')
+      setPinyinState(null)
+      setIsSelectionOpen(false)
     }
-
-    setCurrentPinyin('')
-    setSegmentedPinyin('')
-    setIsSelectionOpen(false)
   }
 
   return (
@@ -139,6 +147,6 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
       )}
     </div>
   )
-}
+})
 
 export default CandidateBar

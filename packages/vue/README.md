@@ -113,7 +113,7 @@ registerPinyinEngine(pinyinEngine)
 
 需要将以下文件发布到 `public/rime/` 目录：
 
-- `rime-api.js` / `rime-api.wasm` - RIME 引擎本体
+- `rime-api.wasm` - RIME 引擎本体
 - `default.yaml` - 默认配置
 - `luna_pinyin.schema.yaml` - 拼音方案
 - `luna_pinyin.table.bin` 、`luna_pinyin.prism.bin` 、`luna_pinyin.reverse.bin` - 词典文件

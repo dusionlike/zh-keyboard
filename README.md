@@ -109,7 +109,7 @@ setKeyboardConfig({
 
 需要将 `@zh-keyboard/pinyin` 包中 `data/` 目录的以下文件发布到你的静态资源路径：
 
-- `rime-api.js` / `rime-api.wasm` — RIME 引擎本体
+- `rime-api.wasm` — RIME 引擎本体
 - `default.yaml` — 默认配置
 - `luna_pinyin.schema.yaml` — 拼音方案
 - `luna_pinyin.table.bin` / `luna_pinyin.prism.bin` / `luna_pinyin.reverse.bin` — 词典文件
