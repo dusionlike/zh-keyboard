@@ -3,7 +3,7 @@ import type { PinyinEngine } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
 import { getKeyboardConfig, getPinyinEngine } from '@zh-keyboard/core'
 import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import CandidateList from './CandidateList.vue'
 import CandidateSelection from './CandidateSelection.vue'
 import '../styles/CandidateBar.scss'
@@ -17,8 +17,18 @@ const currentPinyin = defineModel<string>({
   required: true,
 })
 
+const segmentedPinyin = ref('')
+
+watch(currentPinyin, (val) => {
+  if (!val) {
+    segmentedPinyin.value = ''
+  }
+})
+
+const showedPinyin = computed(() => segmentedPinyin.value || currentPinyin.value)
+
 // 拼音引擎实例
-const engine = ref<PinyinEngine | null>(null)
+let engine: PinyinEngine | null = null
 // 标记引擎是否由本组件创建（外部注册的引擎不由本组件销毁）
 let engineIsOwned = false
 
@@ -29,30 +39,31 @@ const isSelectionOpen = ref(false)
 onMounted(async () => {
   const registered = getPinyinEngine()
   if (registered) {
-    engine.value = registered
+    engine = registered
     engineIsOwned = false
   } else {
     const wasmDir = getKeyboardConfig().wasmDir ?? '/rime'
-    engine.value = await createRimePinyinEngine({ wasmDir })
+    engine = await createRimePinyinEngine({ wasmDir })
     engineIsOwned = true
   }
 
   // 引擎就绪后，若已有拼音输入则立即处理
   if (currentPinyin.value) {
-    const result = engine.value.processInput(currentPinyin.value)
-    candidates.value = result instanceof Promise ? await result : result
+    const result = await engine.processInput(currentPinyin.value)
+    candidates.value = result.candidates
+    segmentedPinyin.value = result.segmentedPinyin
   }
 })
 
 onUnmounted(() => {
   if (engineIsOwned) {
-    engine.value?.destroy()
+    engine?.destroy()
   }
-  engine.value = null
+  engine = null
 })
 
 watch(currentPinyin, async (newVal) => {
-  const eng = engine.value
+  const eng = engine
   if (!eng)
     return
 
@@ -62,23 +73,25 @@ watch(currentPinyin, async (newVal) => {
     return
   }
 
-  const result = eng.processInput(newVal)
-  candidates.value = result instanceof Promise ? await result : result
+  const result = await eng.processInput(newVal)
+  candidates.value = result.candidates
+  segmentedPinyin.value = result.segmentedPinyin
 })
 
 async function handleSelection(globalIndex: number) {
-  const eng = engine.value
+  const eng = engine
   if (!eng)
     return
 
-  const result = eng.pickCandidate(globalIndex)
-  const committed = result instanceof Promise ? await result : result
+  const result = await eng.pickCandidate(globalIndex)
+  const committed = result
 
   if (committed) {
     emit('input', committed)
   }
 
   currentPinyin.value = ''
+  segmentedPinyin.value = ''
   isSelectionOpen.value = false
 }
 </script>
@@ -87,8 +100,8 @@ async function handleSelection(globalIndex: number) {
   <div class="zhk-candidate">
     <div class="zhk-candidate__container">
       <!-- 输入拼音显示 -->
-      <div v-if="currentPinyin" class="zhk-candidate__pinyin">
-        {{ currentPinyin }}
+      <div v-if="showedPinyin" class="zhk-candidate__pinyin">
+        {{ showedPinyin }}
       </div>
 
       <div class="zhk-candidate__bottom-container">

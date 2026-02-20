@@ -2,7 +2,7 @@ import type { PinyinEngine } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
 import { getKeyboardConfig, getPinyinEngine } from '@zh-keyboard/core'
 import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import chevronRight from '../assets/icons/chevron-right.svg'
 import CandidateList from './CandidateList'
 import CandidateSelection from './CandidateSelection'
@@ -25,6 +25,16 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
   const [engineReady, setEngineReady] = useState(false)
   const [candidates, setCandidates] = useState<string[]>([])
   const [isSelectionOpen, setIsSelectionOpen] = useState(false)
+
+  const [segmentedPinyin, setSegmentedPinyin] = useState('')
+
+  useLayoutEffect(() => {
+    if (!currentPinyin) {
+      setSegmentedPinyin('')
+    }
+  }, [currentPinyin])
+
+  const showedPinyin = useMemo(() => segmentedPinyin || currentPinyin, [segmentedPinyin, currentPinyin])
 
   // 初始化引擎（仅执行一次）
   useLayoutEffect(() => {
@@ -72,12 +82,11 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
       return
     }
 
-    const result = eng.processInput(currentPinyin)
-    if (result instanceof Promise) {
-      result.then(setCandidates)
-    } else {
-      setCandidates(result)
-    }
+    (async () => {
+      const result = await eng.processInput(currentPinyin)
+      setCandidates(result.candidates)
+      setSegmentedPinyin(result.segmentedPinyin)
+    })()
   }, [currentPinyin, engineReady])
 
   async function handleSelection(globalIndex: number) {
@@ -85,23 +94,23 @@ const CandidateBar: React.FC<CandidateBarProps> = ({
     if (!eng)
       return
 
-    const result = eng.pickCandidate(globalIndex)
-    const committed = result instanceof Promise ? await result : result
+    const committed = await eng.pickCandidate(globalIndex)
 
     if (committed) {
       onInput(committed)
     }
 
     setCurrentPinyin('')
+    setSegmentedPinyin('')
     setIsSelectionOpen(false)
   }
 
   return (
     <div className="zhk-candidate">
       <div className="zhk-candidate__container">
-        {currentPinyin && (
+        {showedPinyin && (
           <div className="zhk-candidate__pinyin">
-            {currentPinyin}
+            {showedPinyin}
           </div>
         )}
         <div className="zhk-candidate__bottom-container">

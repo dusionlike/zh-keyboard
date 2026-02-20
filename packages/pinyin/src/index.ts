@@ -75,12 +75,13 @@ export async function createRimePinyinEngine(
   }
 
   const rimePinyinEngine: PinyinEngine = {
-    async processInput(fullPinyin: string): Promise<string[]> {
+    async processInput(fullPinyin: string) {
+      const result = { candidates: [], segmentedPinyin: fullPinyin }
       if (!fullPinyin) {
         engine.clearInput()
         prevRimeInput = ''
         candidatePageMap = []
-        return []
+        return result
       }
 
       let firstPageState: RimeState
@@ -100,7 +101,7 @@ export async function createRimePinyinEngine(
       const { candidates, pageMap } = collectAllCandidates(firstPageState)
       candidatePageMap = pageMap
 
-      return candidates
+      return { candidates, segmentedPinyin: firstPageState.preeditBody }
     },
 
     async pickCandidate(globalIndex: number): Promise<string | null> {
@@ -124,17 +125,17 @@ export async function createRimePinyinEngine(
       return state.committed
     },
 
-    clearInput(): void {
+    async clearInput() {
       engine.clearInput()
       prevRimeInput = ''
       candidatePageMap = []
     },
 
-    setSimplified(simplified: boolean): void {
+    async setSimplified(simplified: boolean) {
       engine.setOption('zh_simp', simplified)
     },
 
-    destroy(): void {
+    async destroy() {
       engine.destroy()
       prevRimeInput = ''
       candidatePageMap = []
