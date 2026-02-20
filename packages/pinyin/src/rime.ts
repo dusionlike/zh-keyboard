@@ -1,5 +1,6 @@
 import type { PinyinEngine } from '@zh-keyboard/core'
 import type { RimeEngine, RimeState, RimeWasmOptions } from './types'
+import createRimeModule from '../data/rime-api.js'
 
 export type { RimeCandidate, RimeEngine, RimeState, RimeWasmOptions } from './types'
 
@@ -33,16 +34,12 @@ export async function createRimeEngine(
   options: RimeWasmOptions = {},
 ): Promise<RimeEngine> {
   const wasmDir = options.wasmDir ?? '.'
-  const scriptUrl = `${wasmDir}/rime-api.js`
-
-  // 加载 Emscripten 模块工厂
-  const createRimeModule = (await import(scriptUrl)).default
 
   const Module: EmscriptenModule = await createRimeModule({
     locateFile(file: string) {
       return `${wasmDir}/${file}`
     },
-  })
+  }) as EmscriptenModule
 
   // Set up persistent filesystem
   try {

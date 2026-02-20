@@ -16,11 +16,13 @@ test('diagnostic', async ({ page }) => {
   await page.waitForTimeout(2000)
 
   const candidateVisible = await page.locator('.zhk-candidate').isVisible()
-  console.log('Candidate bar visible:', candidateVisible)
+
+  console.warn('Candidate bar visible:', candidateVisible)
 
   const dBtn = page.locator('button.zhk-base__key--letter', { hasText: 'D' }).first()
   const dVisible = await dBtn.isVisible()
-  console.log('D button visible:', dVisible)
+
+  console.warn('D button visible:', dVisible)
 
   if (dVisible) {
     await dBtn.click()
@@ -36,17 +38,21 @@ test('diagnostic', async ({ page }) => {
   await page.waitForTimeout(20000)
 
   const candidateCount = await page.locator('.zhk-candidate-list__item').count()
-  console.log('Candidate count after 20s:', candidateCount)
+
+  console.warn('Candidate count after 20s:', candidateCount)
 
   const candidateBarHtml = await page.locator('.zhk-candidate').innerHTML().catch(() => 'not found')
-  console.log('Candidate bar html (first 300):', candidateBarHtml.slice(0, 300))
 
-  console.log(`\n=== Console logs (${logs.length} total) ===`)
+  console.warn('Candidate bar html (first 300):', candidateBarHtml.slice(0, 300))
+
+  console.warn(`\n=== Console logs (${logs.length} total) ===`)
   logs.forEach((l) => {
     if (!l.includes('[vite]') && !l.includes('Download the React DevTools'))
-      console.log(l)
+
+      console.warn(l)
   })
 
-  console.log('\n=== Page Errors ===')
-  errors.forEach(e => console.log(e))
+  console.warn('\n=== Page Errors ===')
+  errors.forEach(e =>
+    console.warn(e))
 })

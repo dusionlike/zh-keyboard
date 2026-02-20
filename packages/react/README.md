@@ -121,6 +121,49 @@ function App() {
 export default App
 ```
 
+## 拼音引擎初始化
+
+### 使用 RIME WASM 拼音引擎
+
+拼音输入功能需要初始化拼音引擎。推荐使用基于 RIME WASM 的拼音引擎：
+
+```typescript
+import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
+import { registerPinyinEngine } from '@zh-keyboard/react'
+
+// 初始化 RIME 拼音引擎
+const pinyinEngine = await createRimePinyinEngine({
+  wasmDir: '/rime', // WASM 文件和词典数据的路径
+  simplified: true, // 是否使用简体中文（默认 true）
+})
+
+// 注册到全局
+registerPinyinEngine(pinyinEngine)
+```
+
+### WASM 文件部署
+
+需要将以下文件发布到 `public/rime/` 目录：
+
+- `rime-api.js` / `rime-api.wasm` - RIME 引擎本体
+- `default.yaml` - 默认配置
+- `luna_pinyin.schema.yaml` - 拼音方案
+- `luna_pinyin.table.bin` 、`luna_pinyin.prism.bin` 、`luna_pinyin.reverse.bin` - 词典文件
+
+这些文件来自 `@zh-keyboard/pinyin` 包的 `data/` 目录。
+
+### 全局配置拼音引擎
+
+你也可以在全局配置中指定 WASM 目录：
+
+```typescript
+import { setKeyboardConfig } from '@zh-keyboard/react'
+
+setKeyboardConfig({
+  wasmDir: '/rime', // RIME WASM 文件路径前缀
+})
+```
+
 ## 输入模式
 
 ### 拼音输入模式 (zh)

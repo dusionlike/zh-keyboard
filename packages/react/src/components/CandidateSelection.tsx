@@ -12,7 +12,7 @@ const CandidateSelection: React.FC<CandidateSelectionProps> = ({ candidates, onS
     <div className="zhk-selection">
       <div className="zhk-selection__list">
         {candidates.map((candidate, index) => (
-          <div key={index} className="zhk-selection__text" onClick={() => onSelect(index)}>
+          <div key={candidate} className="zhk-selection__text" onClick={() => onSelect(index)}>
             {candidate}
           </div>
         ))}

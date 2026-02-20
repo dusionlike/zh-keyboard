@@ -11,7 +11,7 @@ const CandidateList: React.FC<CandidateListProps> = ({ candidates, onSelect }) =
     <div className="zhk-candidate-list">
       {candidates.map((candidate, index) => (
         <button
-          key={`candidate-${index}`}
+          key={candidate}
           className="zhk-candidate-list__item"
           onClick={() => onSelect(index)}
         >
