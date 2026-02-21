@@ -45,6 +45,9 @@ importers:
       '@zh-keyboard/vue':
         specifier: workspace:*
         version: link:../packages/vue
+      comlink:
+        specifier: ^4.4.2
+        version: 4.4.2
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -1796,6 +1799,9 @@ packages:
 
   colorjs.io@0.5.2:
     resolution: {integrity: sha512-twmVoizEW7ylZSN32OgKdXRmo1qg+wT5/6C3xu5b9QsWzSFAhHLn2xd8ro0diCsKfCj1RdaTP/nrcW+vAoQPIw==}
+
+  comlink@4.4.2:
+    resolution: {integrity: sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==}
 
   comment-parser@1.4.1:
     resolution: {integrity: sha512-buhp5kePrmda3vhc5B9t7pUQXAb2Tnd0qgpkIhPhkHXxJpiPJ11H0ZEU0oBpJ2QztSbzG/ZxMj/CHsYJqRHmyg==}
@@ -5232,6 +5238,8 @@ snapshots:
   color-name@1.1.4: {}
 
   colorjs.io@0.5.2: {}
+
+  comlink@4.4.2: {}
 
   comment-parser@1.4.1: {}
 

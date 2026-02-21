@@ -1,6 +1,7 @@
-import { RimePinyinEngine } from '@zh-keyboard/pinyin'
+import type { RimePinyinEngine } from '@zh-keyboard/pinyin'
 import { ZhkRecognizer } from '@zh-keyboard/recognizer'
 import { registerHandwritingRecognizer, registerPinyinEngine } from '@zh-keyboard/vue'
+import { wrap } from 'comlink'
 import { createApp } from 'vue'
 import App from './App.vue'
 
@@ -9,8 +10,9 @@ registerHandwritingRecognizer(new ZhkRecognizer({
   dictPath: new URL('/models/dict.txt', import.meta.url).href,
 }))
 
-registerPinyinEngine(new RimePinyinEngine({
-  wasmDir: '/data',
-}))
+const pinyinEngineWorker = new Worker(new URL('./pinyin-engine.worker.ts', import.meta.url), { type: 'module' })
+const pinyinEngine = wrap<RimePinyinEngine>(pinyinEngineWorker)
+
+registerPinyinEngine(pinyinEngine)
 
 createApp(App).mount('#app')

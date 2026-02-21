@@ -23,7 +23,11 @@ export class RimePinyinEngine implements PinyinEngine {
   private engine: RimeEngine | null = null
   private prevRimeInput = ''
 
-  constructor(private options: RimePinyinEngineOptions = {}) {}
+  private initPromise: Promise<void> | null = null
+
+  constructor(private options: RimePinyinEngineOptions = {}) {
+    this.initialize()
+  }
 
   private async getEngine() {
     await this.initialize()
@@ -31,10 +35,14 @@ export class RimePinyinEngine implements PinyinEngine {
   }
 
   async initialize(): Promise<void> {
-    if (this.engine)
-      return // 已初始化
-    this.engine = await createRimeEngine(this.options)
-    this.engine.setOption('zh_simp', this.options.simplified ?? true)
+    if (this.initPromise) {
+      return this.initPromise
+    }
+    this.initPromise = (async () => {
+      this.engine = await createRimeEngine(this.options)
+      this.engine.setOption('zh_simp', this.options.simplified ?? true)
+    })()
+    return this.initPromise
   }
 
   async processInput(fullPinyin: string) {

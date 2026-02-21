@@ -105,6 +105,8 @@ registerPinyinEngine(new RimePinyinEngine({
 }))
 ```
 
+worker写法参考 `examples`。
+
 ### WASM 文件部署
 
 需要将以下文件发布到 `public/data/` 目录：
