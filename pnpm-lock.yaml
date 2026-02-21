@@ -36,6 +36,9 @@ importers:
 
   examples:
     dependencies:
+      '@zh-keyboard/pinyin':
+        specifier: workspace:*
+        version: link:../packages/pinyin
       '@zh-keyboard/recognizer':
         specifier: workspace:*
         version: link:../packages/recognizer

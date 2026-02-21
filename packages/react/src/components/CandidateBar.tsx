@@ -1,7 +1,6 @@
 import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
-import { getKeyboardConfig, getPinyinEngine } from '@zh-keyboard/core'
-import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
+import { getPinyinEngine } from '@zh-keyboard/core'
 import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import chevronRight from '../assets/icons/chevron-right.svg'
 import CandidateList from './CandidateList'
@@ -44,8 +43,6 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
 
   // 初始化引擎（仅执行一次）
   useLayoutEffect(() => {
-    let cancelled = false
-
     const registered = getPinyinEngine()
     if (registered) {
       // 使用外部注册的引擎，不持有所有权
@@ -53,31 +50,17 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
       engineIsOwnedRef.current = false
       setEngineReady(true)
     } else {
-      // 回退：创建默认 RIME 引擎
-      const wasmDir = getKeyboardConfig().wasmDir ?? '/rime'
-      createRimePinyinEngine({ wasmDir }).then((eng) => {
-        if (!cancelled) {
-          engineRef.current = eng
-          engineIsOwnedRef.current = true
-          setEngineReady(true)
-          if (currentPinyin) {
-            eng.processInput(currentPinyin).then(state => setPinyinState(state))
-          }
-        } else {
-          eng.destroy()
-        }
-      })
+      throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
     }
 
     return () => {
-      cancelled = true
       if (engineIsOwnedRef.current) {
         engineRef.current?.destroy()
       }
       engineRef.current = null
       setEngineReady(false)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   // 处理拼音变化
   useLayoutEffect(() => {

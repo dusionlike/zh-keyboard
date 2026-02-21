@@ -1,0 +1,179 @@
+__build_info:
+  rime_version: 1.16.1
+  timestamps:
+    default: 1771504467
+    default.custom: 0
+    luna_pinyin.custom: 0
+    luna_pinyin.schema: 1771504467
+engine:
+  filters:
+    - simplifier@zh_simp
+    - uniquifier
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - script_translator
+key_binder:
+  bindings:
+    - {accept: 'Control+p', send: Up, when: composing}
+    - {accept: 'Control+n', send: Down, when: composing}
+    - {accept: 'Control+b', send: Left, when: composing}
+    - {accept: 'Control+f', send: Right, when: composing}
+    - {accept: 'Control+a', send: Home, when: composing}
+    - {accept: 'Control+e', send: End, when: composing}
+    - {accept: 'Control+d', send: Delete, when: composing}
+    - {accept: 'Control+k', send: 'Shift+Delete', when: composing}
+    - {accept: 'Control+g', send: Escape, when: composing}
+    - {accept: 'Alt+v', send: Page_Up, when: composing}
+    - {accept: 'Control+v', send: Page_Down, when: composing}
+    - {accept: ISO_Left_Tab, send: 'Shift+Left', when: composing}
+    - {accept: 'Shift+Tab', send: 'Shift+Left', when: composing}
+    - {accept: Tab, send: 'Shift+Right', when: composing}
+    - {accept: minus, send: Page_Up, when: paging}
+    - {accept: equal, send: Page_Down, when: has_menu}
+    - {accept: comma, send: Page_Up, when: paging}
+    - {accept: period, send: Page_Down, when: has_menu}
+    - {accept: comma, send: comma, when: predicting}
+    - {accept: period, send: period, when: predicting}
+    - {accept: 'Control+Shift+1', select: .next, when: always}
+    - {accept: 'Control+Shift+2', toggle: ascii_mode, when: always}
+    - {accept: 'Control+Shift+3', toggle: full_shape, when: always}
+    - {accept: 'Shift+space', toggle: full_shape, when: always}
+    - {accept: 'Control+period', toggle: ascii_punct, when: always}
+  import_preset: default
+menu:
+  page_size: 100
+punctuator:
+  full_shape:
+    ' ': {commit: '　'}
+    '!': {commit: ！}
+    '"': {pair: ['"', '"']}
+    '#': [＃, ⌘]
+    $: [￥, $, €, £, ¥, ¢, ¤]
+    '%': [％, °, ℃]
+    '&': ＆
+    "'": {pair: ["', '"]}
+    (: （
+    ): ）
+    '*': [＊, ・, ·, ×, ※, ❂]
+    '+': ＋
+    ',': {commit: ，}
+    '-': －
+    .: {commit: 。}
+    /: [／, ÷]
+    ':': {commit: ：}
+    ;: {commit: ；}
+    <: [《, 〈, «, ‹]
+    =: ＝
+    '>': [》, 〉, », ›]
+    '?': {commit: ？}
+    '@': [＠, ☯]
+    '[': [「, 【, 〔, ［]
+    '\': [、, ＼]
+    ']': [」, 】, 〕, ］]
+    ^: {commit: ……}
+    _: ——
+    '`': ｀
+    '{': [『, 〖, ｛]
+    '|': [・, ｜, §, ¦]
+    '}': [』, 〗, ｝]
+    '~': [〜, ～, 〰]
+  half_shape:
+    '!': {commit: ！}
+    '"': {pair: ['"', '"']}
+    '#': '#'
+    $: [￥, $, €, £, ¥, ¢, ¤]
+    '%': ['%', ％, °, ℃]
+    '&': '&'
+    "'": {pair: ["', '"]}
+    (: （
+    ): ）
+    '*': ['*', ＊, ・, ·, ×, ※, ❂]
+    '+': '+'
+    ',': {commit: ，}
+    '-': '-'
+    .: {commit: 。}
+    /: [、, /, ／, ÷]
+    ':': {commit: ：}
+    ;: {commit: ；}
+    <: [《, 〈, «, ‹]
+    =: =
+    '>': [》, 〉, », ›]
+    '?': {commit: ？}
+    '@': '@'
+    '[': [「, 【, 〔, ［]
+    '\': [、, '\', ＼]
+    ']': [」, 】, 〕, ］]
+    ^: {commit: ……}
+    _: ——
+    '`': '`'
+    '{': [『, 〖, ｛]
+    '|': [・, '|', ｜, §, ¦]
+    '}': [』, 〗, ｝]
+    '~': ['~', 〜, ～, 〰]
+  import_preset: default
+recognizer:
+  import_preset: default
+  patterns:
+    email: '^[a-z][-_.0-9a-z]*@.*$'
+    uppercase: "[A-Z][-_+.'0-9A-Za-z]*$"
+    url: '^(www[.]|https?:|ftp:|mailto:).*$|^[a-z]+[.].+$'
+schema:
+  author:
+    - 佛振 <chen.sst@gmail.com>
+  description: |
+    Rime 預設的拼音輸入方案。
+
+  name: 朙月拼音
+  schema_id: luna_pinyin
+  version: 0.15.wasm
+speller:
+  algebra:
+    - erase/^xx$/
+    - 'abbrev/^([a-z]).+$/$1/'
+    - 'abbrev/^([zcs]h).+$/$1/'
+    - 'derive/^([nl])ve$/$1ue/correction'
+    - 'derive/^([jqxy])u/$1v/correction'
+    - derive/un$/uen/correction
+    - derive/ui$/uei/correction
+    - derive/iu$/iou/correction
+    - 'derive/([aeiou])ng$/$1gn/correction'
+    - 'derive/([dtngkhrzcs])o(u|ng)$/$1o/correction'
+    - derive/ong$/on/correction
+    - derive/ao$/oa/correction
+    - 'derive/([iu])a(o|ng?)$/a$1$2/correction'
+  alphabet: zyxwvutsrqponmlkjihgfedcba
+  delimiter: " '"
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [中文, ABC]
+  - name: full_shape
+    states: [半寬文字, 全寬文字]
+  - name: ascii_punct
+    states: [中文標點, 西文標點]
+  - name: zh_simp
+    reset: 0
+    states: [繁體, 簡體]
+translator:
+  dictionary: luna_pinyin
+  preedit_format:
+    - 'xform/([nljqxy])v/$1ü/'
+zh_simp:
+  opencc_config: t2s.json
+  option_name: zh_simp
+  tips: all

@@ -99,19 +99,15 @@ const inputText = ref('')
 import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
 import { registerPinyinEngine } from '@zh-keyboard/vue'
 
-// 初始化 RIME 拼音引擎
-const pinyinEngine = await createRimePinyinEngine({
-  wasmDir: '/rime', // WASM 文件和词典数据的路径
-  simplified: true, // 是否使用简体中文（默认 true）
-})
-
-// 注册到全局
-registerPinyinEngine(pinyinEngine)
+// 注册 RIME 拼音引擎
+registerPinyinEngine(new RimePinyinEngine({
+  wasmDir: '/data',
+}))
 ```
 
 ### WASM 文件部署
 
-需要将以下文件发布到 `public/rime/` 目录：
+需要将以下文件发布到 `public/data/` 目录：
 
 - `rime-api.wasm` - RIME 引擎本体
 - `default.yaml` - 默认配置
@@ -119,17 +115,6 @@ registerPinyinEngine(pinyinEngine)
 - `luna_pinyin.table.bin` 、`luna_pinyin.prism.bin` 、`luna_pinyin.reverse.bin` - 词典文件
 
 这些文件来自 `@zh-keyboard/pinyin` 包的 `data/` 目录。
-
-### 全局配置拼音引擎
-
-你也可以在全局配置中指定 WASM 目录：
-
-```typescript
-import { setKeyboardConfig } from '@zh-keyboard/vue'
-
-setKeyboardConfig({
-  wasmDir: '/rime', // RIME WASM 文件路径前缀
-})
 ```
 
 ## 输入模式

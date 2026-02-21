@@ -31,6 +31,10 @@ export interface PinyinState {
  */
 export interface PinyinEngine {
   /**
+   * 初始化引擎，加载必要资源
+   */
+  initialize(): Promise<void>
+  /**
    * 处理完整的拼音输入串，返回所有候选词列表（跨所有页）。
    * 引擎内部负责增量 vs 重置的优化，调用方只传完整拼音。
    * @param pinyin 完整的拼音字符串

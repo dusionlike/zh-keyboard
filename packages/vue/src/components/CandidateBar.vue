@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
-import { getKeyboardConfig, getPinyinEngine } from '@zh-keyboard/core'
-import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
+import { getPinyinEngine } from '@zh-keyboard/core'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import CandidateList from './CandidateList.vue'
 import CandidateSelection from './CandidateSelection.vue'
@@ -34,9 +33,7 @@ onMounted(async () => {
     engine = registered
     engineIsOwned = false
   } else {
-    const wasmDir = getKeyboardConfig().wasmDir ?? '/rime'
-    engine = await createRimePinyinEngine({ wasmDir })
-    engineIsOwned = true
+    throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
   }
 
   // 引擎就绪后，若已有拼音输入则立即处理

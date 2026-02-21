@@ -1,5 +1,5 @@
 import type { PinyinEngine } from '@zh-keyboard/core'
-import type { RimeState, RimeWasmOptions } from './types'
+import type { RimeEngine, RimeState, RimeWasmOptions } from './types'
 import { createRimeEngine } from './rime'
 
 export type PinyinState = RimeState
@@ -19,58 +19,66 @@ export interface RimePinyinEngineOptions extends RimeWasmOptions {
  * 创建基于 RIME WASM 的拼音引擎，实现 PinyinEngine 通用接口。
  * 内部处理分页逻辑，processInput 返回所有页的候选词集合。
  */
-export async function createRimePinyinEngine(
-  options: RimePinyinEngineOptions = {},
-): Promise<PinyinEngine> {
-  const engine = await createRimeEngine(options)
+export class RimePinyinEngine implements PinyinEngine {
+  private engine: RimeEngine | null = null
+  private prevRimeInput = ''
 
-  // 初始化时设置简繁体选项（默认简体）
-  engine.setOption('zh_simp', options.simplified ?? true)
+  constructor(private options: RimePinyinEngineOptions = {}) {}
 
-  // 记录上次发送给底层 RIME 的实际输入（用于增量优化）
-  let prevRimeInput = ''
-
-  const rimePinyinEngine: PinyinEngine = {
-    async processInput(fullPinyin: string) {
-      if (!fullPinyin) {
-        engine.clearInput()
-        prevRimeInput = ''
-        return null
-      }
-
-      let state: RimeState
-
-      if (fullPinyin.startsWith(prevRimeInput)) {
-        // 增量输入：只发送新增部分
-        const delta = fullPinyin.slice(prevRimeInput.length)
-        state = engine.processInput(delta)
-      } else {
-        // 删除或修改：清空后重新输入完整拼音
-        engine.clearInput()
-        state = engine.processInput(fullPinyin)
-      }
-
-      prevRimeInput = fullPinyin
-
-      return state
-    },
-
-    async pickCandidate(index: number) {
-      return engine.pickCandidate(index)
-    },
-
-    async clearInput() {
-      return engine.clearInput()
-    },
-
-    async setSimplified(simplified: boolean) {
-      return engine.setOption('zh_simp', simplified)
-    },
-
-    async destroy() {
-      return engine.destroy()
-    },
+  private async getEngine() {
+    await this.initialize()
+    return this.engine!
   }
 
-  return rimePinyinEngine
+  async initialize(): Promise<void> {
+    if (this.engine)
+      return // 已初始化
+    this.engine = await createRimeEngine(this.options)
+    this.engine.setOption('zh_simp', this.options.simplified ?? true)
+  }
+
+  async processInput(fullPinyin: string) {
+    const engine = await this.getEngine()
+    if (!fullPinyin) {
+      engine.clearInput()
+      this.prevRimeInput = ''
+      return null
+    }
+
+    let state: RimeState
+
+    if (fullPinyin.startsWith(this.prevRimeInput)) {
+      // 增量输入：只发送新增部分
+      const delta = fullPinyin.slice(this.prevRimeInput.length)
+      state = engine.processInput(delta)
+    } else {
+      // 删除或修改：清空后重新输入完整拼音
+      engine.clearInput()
+      state = engine.processInput(fullPinyin)
+    }
+
+    this.prevRimeInput = fullPinyin
+
+    return state
+  }
+
+  async pickCandidate(index: number) {
+    const engine = await this.getEngine()
+    return engine.pickCandidate(index)
+  }
+
+  async clearInput() {
+    const engine = await this.getEngine()
+    return engine.clearInput()
+  }
+
+  async setSimplified(simplified: boolean) {
+    const engine = await this.getEngine()
+    return engine.setOption('zh_simp', simplified)
+  }
+
+  async destroy() {
+    const engine = await this.getEngine()
+    return engine.destroy()
+  }
 }

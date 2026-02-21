@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   base: './',
   server: {
-    port: 5175,
+    port: 5178,
   },
   plugins: [vue()],
 })
