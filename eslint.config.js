@@ -8,7 +8,7 @@ export default antfu(
       'src/types/electron.d.ts',
       '*.json',
       'src/auTem/aumap.json',
-      'public/**',
+      '**/public/**',
       'dist/**',
       'packages/pinyin/data/**',
     ],
