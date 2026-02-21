@@ -18,8 +18,6 @@ const currentPinyin = defineModel<string>({
 
 // 拼音引擎实例
 let engine: PinyinEngine | null = null
-// 标记引擎是否由本组件创建（外部注册的引擎不由本组件销毁）
-let engineIsOwned = false
 
 const pinyinState = ref<PinyinState | null>(null)
 
@@ -28,11 +26,8 @@ const candidates = computed(() => pinyinState.value?.candidates.map(c => c.text)
 const isSelectionOpen = ref(false)
 
 onMounted(async () => {
-  const registered = getPinyinEngine()
-  if (registered) {
-    engine = registered
-    engineIsOwned = false
-  } else {
+  engine = getPinyinEngine()
+  if (!engine) {
     throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
   }
 
@@ -43,9 +38,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  if (engineIsOwned) {
-    engine?.destroy()
-  }
+  engine?.clearInput()
   engine = null
 })
 

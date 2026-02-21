@@ -24,7 +24,6 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
   setCurrentPinyin,
 }, ref) => {
   const engineRef = useRef<PinyinEngine | null>(null)
-  const engineIsOwnedRef = useRef(false)
   const [engineReady, setEngineReady] = useState(false)
   const [pinyinState, setPinyinState] = useState<PinyinState | null>(null)
   const [isSelectionOpen, setIsSelectionOpen] = useState(false)
@@ -43,21 +42,17 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
 
   // 初始化引擎（仅执行一次）
   useLayoutEffect(() => {
-    const registered = getPinyinEngine()
-    if (registered) {
+    const engine = getPinyinEngine()
+    if (engine) {
       // 使用外部注册的引擎，不持有所有权
-      engineRef.current = registered
-      engineIsOwnedRef.current = false
+      engineRef.current = engine
       setEngineReady(true)
     } else {
       throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
     }
 
     return () => {
-      if (engineIsOwnedRef.current) {
-        engineRef.current?.destroy()
-      }
-      engineRef.current = null
+      engineRef.current?.clearInput()
       setEngineReady(false)
     }
   }, [])

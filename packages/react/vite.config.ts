@@ -19,7 +19,7 @@ function serveRimeDataPlugin(): Plugin {
   return {
     name: 'serve-rime-data',
     configureServer(server) {
-      server.middlewares.use('/rime', (req, res, next) => {
+      server.middlewares.use('/data', (req, res, next) => {
         // Strip query params (Vite adds ?import to dynamic imports)
         const urlPath = (req.url ?? '').split('?')[0].replace(/^\//, '')
         const filePath = resolve(rimeDataDir, urlPath)
