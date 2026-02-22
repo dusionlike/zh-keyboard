@@ -45,7 +45,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
 
   useEffect(() => {
     // 仅在基础输入模式下更新 previousModeRef，以便 goBack 正确返回
-    if (mode === 'en' || mode === 'zh') {
+    if (mode === 'en' || mode === 'en_cap' || mode === 'zh') {
       previousModeRef.current = mode
     }
   }, [mode])
@@ -186,7 +186,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
                 />
               )}
               {mode === 'symbol' && <SymbolKeyboard onKey={handleKeyEvent} onExit={goBack} />}
-              {(mode === 'en' || mode === 'zh') && (
+              {(mode === 'en' || mode === 'en_cap' || mode === 'zh') && (
                 <KeyboardBase
                   mode={mode}
                   setMode={setMode}

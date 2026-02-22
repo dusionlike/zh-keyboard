@@ -34,7 +34,7 @@ onMounted(() => {
       <div class="input-grid">
         <div class="input-container">
           <label>英文输入:</label>
-          <input v-model="inputValue" type="text" data-inputmode="en" inputmode="none" placeholder="点击这里使用英文输入" />
+          <input v-model="inputValue" type="text" data-inputmode="en_cap" inputmode="none" placeholder="点击这里使用英文输入" />
         </div>
 
         <div class="input-container">

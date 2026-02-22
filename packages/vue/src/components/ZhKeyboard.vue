@@ -189,7 +189,7 @@ function handleRecognize(results: string[]) {
         @exit="goBack"
       />
       <KeyboardBase
-        v-else-if="mode === 'en' || mode === 'zh'"
+        v-else-if="mode === 'en' || mode === 'en_cap' || mode === 'zh'"
         v-model="mode"
         :enable-handwriting="enableHandwriting"
         @key="handleKeyEvent"

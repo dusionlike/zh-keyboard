@@ -17,7 +17,7 @@ const mode = defineModel<string>({
   default: 'en',
 })
 
-const isUpperCase = ref(false)
+const isUpperCase = computed(() => mode.value === 'en_cap')
 
 const isChineseMode = computed(() => mode.value === 'zh')
 
@@ -35,7 +35,7 @@ function handleShift() {
     mode.value = 'hand'
   } else {
     // 在英文模式下，切换大小写
-    isUpperCase.value = !isUpperCase.value
+    mode.value = isUpperCase.value ? 'en' : 'en_cap'
   }
 }
 

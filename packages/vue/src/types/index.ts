@@ -3,4 +3,4 @@ export interface KeyEvent {
   isControl?: boolean
 }
 
-export type KeyBoardMode = 'zh' | 'en' | 'hand' | 'num' | 'symbol'
+export type KeyBoardMode = 'zh' | 'en' | 'en_cap' | 'hand' | 'num' | 'symbol'

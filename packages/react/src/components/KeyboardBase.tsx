@@ -17,13 +17,13 @@ interface KeyboardBaseProps {
 }
 
 const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, onKey, setMode }) => {
-  const [isUpperCase, setIsUpperCase] = useState(false)
   const [pinyin, setPinyin] = useState('')
   const candidateBarRef = useRef<CandidateBarRef>(null)
 
   const { startRepeat, stopRepeat } = useKeyRepeater()
 
   const isChineseMode = useMemo(() => mode === 'zh', [mode])
+  const isUpperCase = useMemo(() => mode === 'en_cap', [mode])
   const showUpperCase = useMemo(() => isChineseMode ? true : isUpperCase, [isChineseMode, isUpperCase])
 
   function handleSpecialKey(key: string, isControl = false) {
@@ -34,7 +34,7 @@ const KeyboardBase: React.FC<KeyboardBaseProps> = ({ enableHandwriting, mode, on
     if (isChineseMode) {
       setMode('hand')
     } else {
-      setIsUpperCase(!isUpperCase)
+      setMode(mode === 'en_cap' ? 'en' : 'en_cap')
     }
   }
 
