@@ -11,34 +11,51 @@ import NumericKeyboard from './NumericKeyboard.vue'
 import SymbolKeyboard from './SymbolKeyboard.vue'
 import '../styles/ZhKeyboard.scss'
 
-const props = withDefaults(defineProps<{
+const props = defineProps({
   /**
    * 默认的键盘模式
    */
-  defaultMode?: KeyBoardMode
+  defaultMode: {
+    type: String as () => KeyBoardMode,
+    default: () => getKeyboardConfig().defaultMode ?? 'en',
+  },
   /**
    * 是否启用手写输入
    */
-  enableHandwriting?: boolean
+  enableHandwriting: {
+    type: Boolean,
+    default: () => getKeyboardConfig().enableHandwriting ?? false,
+  },
   /**
    * 键盘定位模式
    * @default 'static'
    */
-  position?: 'static' | 'float' | 'bottom'
+  position: {
+    type: String as () => 'static' | 'float' | 'bottom',
+    default: () => getKeyboardConfig().position ?? 'static',
+  },
+  /**
+   * 浮动模式下键盘与输入框的距离
+   * @default 10
+   */
+  floatMarginTop: {
+    type: Number,
+    default: () => getKeyboardConfig().floatMarginTop ?? 0,
+  },
   /**
    * 当没有input获得焦点时是否禁用键盘
    * @default true
    */
-  disableWhenNoFocus?: boolean
+  disableWhenNoFocus: {
+    type: Boolean,
+    default: () => getKeyboardConfig().disableWhenNoFocus ?? true,
+  },
   /**
    * 数字键盘的行配置
    */
-  numKeys?: string[][]
-}>(), {
-  defaultMode: getKeyboardConfig().defaultMode ?? 'en' as const,
-  enableHandwriting: getKeyboardConfig().enableHandwriting ?? false,
-  position: getKeyboardConfig().position ?? 'static',
-  disableWhenNoFocus: getKeyboardConfig().disableWhenNoFocus ?? true,
+  numKeys: {
+    type: Array as () => string[][] || undefined,
+  },
 })
 
 const emit = defineEmits<{
@@ -103,6 +120,7 @@ function updateKeyboardPosition() {
     inputElement.value,
     keyboardRef.value,
     props.position,
+    props.floatMarginTop,
   )
   keyboardPosition.value = newPosition
 }

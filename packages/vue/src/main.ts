@@ -20,6 +20,7 @@ setKeyboardConfig({
     ['7', '8', '9'],
     ['back', '0', 'X'],
   ],
+  floatMarginTop: 20,
 })
 
 createApp(App).mount('#app')

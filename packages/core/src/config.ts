@@ -18,6 +18,11 @@ export interface KeyboardConfig {
    */
   position?: 'static' | 'float' | 'bottom'
   /**
+   * 浮动模式下键盘与输入框的距离
+   * @default 10
+   */
+  floatMarginTop?: number
+  /**
    * 当没有input获得焦点时是否禁用键盘
    */
   disableWhenNoFocus?: boolean

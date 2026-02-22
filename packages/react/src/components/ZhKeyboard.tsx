@@ -16,6 +16,7 @@ interface ZhKeyboardProps {
   defaultMode?: KeyBoardMode
   enableHandwriting?: boolean
   position?: 'static' | 'float' | 'bottom'
+  floatMarginTop?: number
   disableWhenNoFocus?: boolean
   onKey?: (payload: KeyEvent) => void
   className?: string
@@ -23,16 +24,19 @@ interface ZhKeyboardProps {
   numKeys?: string[][]
 }
 
-const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
-  defaultMode = getKeyboardConfig().defaultMode ?? 'en',
-  enableHandwriting = getKeyboardConfig().enableHandwriting ?? false,
-  position = getKeyboardConfig().position ?? 'static',
-  disableWhenNoFocus = getKeyboardConfig().disableWhenNoFocus ?? true,
-  onKey,
-  className,
-  style,
-  numKeys,
-}) => {
+const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
+  const {
+    defaultMode = getKeyboardConfig().defaultMode ?? 'en',
+    enableHandwriting = getKeyboardConfig().enableHandwriting ?? false,
+    position = getKeyboardConfig().position ?? 'static',
+    floatMarginTop = getKeyboardConfig().floatMarginTop ?? 10,
+    disableWhenNoFocus = getKeyboardConfig().disableWhenNoFocus ?? true,
+    onKey,
+    className,
+    style,
+    numKeys,
+  } = props
+
   const [mode, setMode] = useState<KeyBoardMode>(defaultMode)
   const previousModeRef = useRef<KeyBoardMode>(defaultMode)
   const [keyboardPosition, setKeyboardPosition] = useState<KeyboardPosition | null>(null)
@@ -62,9 +66,10 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
       activeElement,
       keyboardRef.current,
       position,
+      floatMarginTop,
     )
     setKeyboardPosition(newPosition)
-  }, [activeElement, position, keyboardHeight])
+  }, [activeElement, position, keyboardHeight, floatMarginTop])
 
   const showKeyboard = useMemo(() => {
     return position === 'static' || isInputElement(activeElement)

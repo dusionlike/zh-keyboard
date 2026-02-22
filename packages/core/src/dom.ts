@@ -14,6 +14,7 @@ export function calculateKeyboardPosition(
   inputElement: HTMLElement | null,
   keyboardElement: HTMLElement | null,
   positionMode: 'static' | 'float' | 'bottom',
+  floatMarginTop = 0, // 浮动模式下键盘与输入框的距离
 ): KeyboardPosition | null {
   // 如果输入框或键盘元素不存在，或者模式为 'static'，则不进行计算
   if (!inputElement || !keyboardElement || positionMode === 'static') {
@@ -32,7 +33,7 @@ export function calculateKeyboardPosition(
     const keyboardWidth = keyboardElement.offsetWidth // 获取键盘的宽度
 
     // 初始计算：键盘顶部在输入框底部，水平居中对齐输入框中心
-    top = inputRect.bottom + window.scrollY // 键盘顶部在输入框底部，并考虑页面滚动
+    top = inputRect.bottom + window.scrollY + floatMarginTop // 键盘顶部在输入框底部，并考虑页面滚动
     left = inputRect.left + window.scrollX + inputRect.width / 2 - keyboardWidth / 2 // 键盘左侧在输入框中心减去键盘宽度的一半，并考虑页面滚动
 
     const viewportWidth = window.innerWidth // 获取视口宽度
