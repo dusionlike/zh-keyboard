@@ -139,11 +139,14 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = ({
   }, [onKey, activeElement])
 
   const goBack = useCallback(() => {
-    if (['hand', 'num', 'symbol'].includes(previousModeRef.current)) {
-      setMode(defaultMode)
+    if (mode === 'hand') {
+      previousModeRef.current = 'zh'
+    }
+    if (['num', 'symbol'].includes(previousModeRef.current)) {
+      previousModeRef.current = defaultMode
     }
     setMode(previousModeRef.current)
-  }, [defaultMode])
+  }, [defaultMode, mode])
 
   return (
     <div

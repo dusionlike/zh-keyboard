@@ -138,7 +138,9 @@ function inputText(text: string) {
 }
 
 function goBack() {
-  if (['hand', 'num', 'symbol'].includes(previousMode.value)) {
+  if (mode.value === 'hand') {
+    previousMode.value = 'zh'
+  } else if (['num', 'symbol'].includes(previousMode.value)) {
     previousMode.value = props.defaultMode
   }
   mode.value = previousMode.value

@@ -191,7 +191,7 @@ function handleSelection(index: number) {
           @click="emit('exit')"
           @contextmenu.prevent
         >
-          返回
+          拼音
         </button>
         <button
           class="handwriting-btn handwriting-btn--function"

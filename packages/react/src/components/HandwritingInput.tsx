@@ -183,7 +183,7 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
                     onClick={onExit}
                     onContextMenu={preventContextMenu}
                   >
-                    返回
+                    拼音
                   </button>
                   <button
                     className="handwriting-btn handwriting-btn--function"
