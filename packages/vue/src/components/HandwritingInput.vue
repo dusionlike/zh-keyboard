@@ -18,13 +18,12 @@ const emit = defineEmits<{
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const containerRef = ref<HTMLDivElement | null>(null)
 let canvasDrawer: CanvasDrawer | null = null
 // 是否正在识别中
 const isRecognizing = ref(false)
 
-// 使用useElementSize获取容器尺寸
-const { height: canvasSize } = useElementSize(containerRef)
+// 监听画布自身尺寸变化
+const { width: canvasWidth, height: canvasHeight } = useElementSize(canvasRef)
 
 function clearCanvas() {
   if (!canvasDrawer)
@@ -40,6 +39,9 @@ function setupCanvas() {
   if (canvasDrawer) {
     canvasDrawer.destroy()
   }
+
+  canvasRef.value.width = canvasWidth.value
+  canvasRef.value.height = canvasHeight.value
 
   canvasDrawer = new CanvasDrawer(canvasRef.value, {
     onDrawEnd: recognizeStroke,
@@ -83,7 +85,8 @@ onUnmounted(() => {
 })
 
 watchEffect(() => {
-  if (canvasRef.value && canvasSize.value && props.recognizerInitialized) {
+  // 当画布尺寸或识别器初始化完成时初始化/重置 CanvasDrawer
+  if (canvasRef.value && (canvasWidth.value || canvasHeight.value) && props.recognizerInitialized) {
     nextTick(() => {
       setupCanvas()
     })
@@ -106,7 +109,7 @@ function handleSelection(index: number) {
       :candidates
       @select="handleSelection"
     />
-    <div ref="containerRef" class="handwriting-content">
+    <div class="handwriting-content">
       <div class="handwriting-buttons">
         <button
           class="handwriting-btn handwriting-btn--function"
@@ -154,7 +157,6 @@ function handleSelection(index: number) {
         <div
           v-if="!recognizerInitialized"
           class="handwriting-loading"
-          :style="{ width: `${canvasSize}px`, height: `${canvasSize}px` }"
         >
           <div class="loading-text">
             正在加载手写识别...
@@ -171,8 +173,6 @@ function handleSelection(index: number) {
           v-else
           ref="canvasRef"
           class="handwriting-canvas"
-          :width="canvasSize"
-          :height="canvasSize"
         ></canvas>
       </div>
       <div class="handwriting-buttons">

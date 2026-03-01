@@ -17,7 +17,6 @@ interface HandwritingInputProps {
 
 const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitialized, recognizerProgress, onKey, onExit }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
   const canvasDrawer = useRef<CanvasDrawer | null>(null)
   const isRecognizing = useRef(false)
   const [candidates, setCandidates] = useState<string[]>([])
@@ -53,15 +52,18 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
       canvasDrawer.current.destroy()
     }
 
+    canvasRef.current.width = canvasRef.current.clientWidth
+    canvasRef.current.height = canvasRef.current.clientHeight
+
     canvasDrawer.current = new CanvasDrawer(canvasRef.current, {
       onDrawEnd: recognizeStroke,
     })
   }, [recognizeStroke])
 
-  const [_, canvasSize] = useElementSize(containerRef)
+  const [canvasWidth, canvasHeight] = useElementSize(canvasRef)
 
   useLayoutEffect(() => {
-    if (canvasSize && recognizerInitialized) {
+    if (canvasWidth && canvasHeight && recognizerInitialized) {
       setupCanvas()
       return () => {
         if (canvasDrawer.current) {
@@ -69,7 +71,7 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
         }
       }
     }
-  }, [canvasSize, recognizerInitialized, setupCanvas])
+  }, [canvasWidth, canvasHeight, recognizerInitialized, setupCanvas])
 
   function clearCanvas() {
     if (!canvasDrawer.current)
@@ -93,122 +95,111 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
   return (
     <div className="handwriting-input">
       <CandidateList candidates={candidates} onSelect={handleSelection} />
-      <div ref={containerRef} className="handwriting-content">
-        {canvasSize
-          ? (
-              <>
-                <div className="handwriting-buttons">
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: '。' }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    。
-                  </button>
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: '？' }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    ？
-                  </button>
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: '！' }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    ！
-                  </button>
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: '、' }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    、
-                  </button>
+      <div className="handwriting-content">
+        <div className="handwriting-buttons">
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: '。' }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            。
+          </button>
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: '？' }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            ？
+          </button>
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: '！' }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            ！
+          </button>
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: '、' }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            、
+          </button>
+        </div>
+        <div className="handwriting-canvas-container">
+          {!recognizerInitialized
+            ? (
+                <div className="handwriting-loading">
+                  <div className="loading-text">
+                    正在加载手写识别...
+                  </div>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${recognizerProgress * 100}%` }}></div>
+                  </div>
+                  <div className="progress-text">
+                    {Math.round(recognizerProgress * 100)}%
+                  </div>
                 </div>
-                <div className="handwriting-canvas-container">
-                  {!recognizerInitialized
-                    ? (
-                        <div
-                          className="handwriting-loading"
-                          style={{ width: `${canvasSize}px`, height: `${canvasSize}px` }}
-                        >
-                          <div className="loading-text">
-                            正在加载手写识别...
-                          </div>
-                          <div className="progress-bar">
-                            <div className="progress-fill" style={{ width: `${recognizerProgress * 100}%` }}></div>
-                          </div>
-                          <div className="progress-text">
-                            {Math.round(recognizerProgress * 100)}%
-                          </div>
-                        </div>
-                      )
-                    : (
-                        <canvas
-                          ref={canvasRef}
-                          className="handwriting-canvas"
-                          width={canvasSize}
-                          height={canvasSize}
-                        >
-                        </canvas>
-                      )}
-                </div>
-                <div className="handwriting-buttons">
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: 'delete', isControl: true }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    <img src={keyboardBackspace} alt="删除" />
-                  </button>
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onClick={onExit}
-                    onContextMenu={preventContextMenu}
-                  >
-                    拼音
-                  </button>
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: '，' }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    ，
-                  </button>
-                  <button
-                    className="handwriting-btn handwriting-btn--function"
-                    onPointerDown={e => startRepeat(e, () => onKey({ key: 'enter', isControl: true }))}
-                    onPointerUp={stopRepeat}
-                    onPointerLeave={stopRepeat}
-                    onPointerCancel={stopRepeat}
-                    onContextMenu={preventContextMenu}
-                  >
-                    <img src={keyboardReturn} alt="回车" />
-                  </button>
-                </div>
-              </>
-            )
-          : null}
+              )
+            : (
+                <canvas
+                  ref={canvasRef}
+                  className="handwriting-canvas"
+                >
+                </canvas>
+              )}
+        </div>
+        <div className="handwriting-buttons">
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: 'delete', isControl: true }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            <img src={keyboardBackspace} alt="删除" />
+          </button>
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onClick={onExit}
+            onContextMenu={preventContextMenu}
+          >
+            拼音
+          </button>
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: '，' }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            ，
+          </button>
+          <button
+            className="handwriting-btn handwriting-btn--function"
+            onPointerDown={e => startRepeat(e, () => onKey({ key: 'enter', isControl: true }))}
+            onPointerUp={stopRepeat}
+            onPointerLeave={stopRepeat}
+            onPointerCancel={stopRepeat}
+            onContextMenu={preventContextMenu}
+          >
+            <img src={keyboardReturn} alt="回车" />
+          </button>
+        </div>
       </div>
     </div>
   )
