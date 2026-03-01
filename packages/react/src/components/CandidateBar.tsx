@@ -52,7 +52,7 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
     }
 
     return () => {
-      engineRef.current?.clearInput()
+      engineRef.current?.processInput('')?.catch(() => {})
       setEngineReady(false)
     }
   }, [])
@@ -64,12 +64,12 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
       return
 
     if (currentPinyin === '') {
-      eng.clearInput()
+      eng.processInput('')?.catch(() => {})
       setPinyinState(null)
       return
     }
 
-    (async () => {
+    ;(async () => {
       const state = await eng.processInput(currentPinyin)
       setPinyinState(state)
     })()

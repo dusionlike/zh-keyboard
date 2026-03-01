@@ -38,7 +38,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  engine?.clearInput()
+  engine?.processInput('').catch(() => {})
   engine = null
 })
 
@@ -48,7 +48,7 @@ watch(currentPinyin, async (newVal) => {
     return
 
   if (newVal === '') {
-    eng.clearInput()
+    eng.processInput('').catch(() => {})
     pinyinState.value = null
     return
   }
