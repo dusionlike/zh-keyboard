@@ -63,10 +63,14 @@ export default defineConfig((env) => {
         sourcemap: true,
         copyPublicDir: false,
         rollupOptions: {
-          external: ['vue'],
+          external: [
+            'vue',
+            '@zh-keyboard/core',
+          ],
           output: {
             globals: {
-              vue: 'Vue',
+              'vue': 'Vue',
+              '@zh-keyboard/core': 'ZhKeyboardCore',
             },
             exports: 'named',
           },

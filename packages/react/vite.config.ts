@@ -60,11 +60,16 @@ export default defineConfig((env) => {
         sourcemap: true,
         copyPublicDir: false,
         rollupOptions: {
-          external: ['react', 'react-dom'],
+          external: [
+            'react',
+            'react-dom',
+            '@zh-keyboard/core',
+          ],
           output: {
             globals: {
               'react': 'React',
               'react-dom': 'ReactDOM',
+              '@zh-keyboard/core': 'ZhKeyboardCore',
             },
             exports: 'named',
           },
