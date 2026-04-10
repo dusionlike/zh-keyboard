@@ -2,7 +2,7 @@ import { RimePinyinEngine } from '@zh-keyboard/pinyin'
 import { expose } from 'comlink'
 
 const pinyinEngine = new RimePinyinEngine({
-  wasmDir: import.meta.env.DEV ? '/data' : './data',
+  wasmDir: new URL('/data/rime-api.wasm', import.meta.url).href.replace(/rime-api\.wasm$/, ''),
 })
 
 expose(pinyinEngine)
