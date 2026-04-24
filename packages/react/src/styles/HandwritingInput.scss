@@ -121,8 +121,10 @@
 
     &--function {
       img {
-        width: var(--key-icon-size);
-        height: var(--key-icon-size);
+        width: calc(1em * var(--key-icon-scale, 1.15));
+        height: calc(1em * var(--key-icon-scale, 1.15));
+        flex-shrink: 0;
+        object-fit: contain;
       }
     }
   }

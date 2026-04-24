@@ -49,7 +49,7 @@
     border: 1px solid var(--border-color, #d1d5da);
     border-radius: var(--key-border-radius, 6px);
     box-shadow: var(--key-shadow, 0 1px 2px rgba(0, 0, 0, 0.1));
-    font-size: var(--key-font-size);
+    font-size: calc(var(--key-font-size) * 2);
     font-weight: 500;
     color: var(--key-text-color, #333);
     cursor: pointer;
@@ -68,7 +68,6 @@
     &--function {
       height: calc(100% / 4 - 6px);
       background-color: var(--function-key-color, #e4e7ea);
-      font-size: var(--key-font-size);
       font-weight: 500;
       color: #555;
 
@@ -92,7 +91,10 @@
   }
 
   &__key-icon {
-    width: var(--key-icon-size);
-    height: var(--key-icon-size);
+    width: calc(1em * var(--key-icon-scale, 1.15));
+    height: calc(1em * var(--key-icon-scale, 1.15));
+    display: inline-block;
+    flex-shrink: 0;
+    object-fit: contain;
   }
 }
