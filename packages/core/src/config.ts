@@ -36,6 +36,11 @@ export interface KeyboardConfig {
    * @default '/rime'
    */
   wasmDir?: string
+  /**
+   * 是否要求 input 元素必须带有 data-inputmode 属性才弹出键盘
+   * @default false
+   */
+  requireInputmode?: boolean
 }
 
 // 全局配置对象

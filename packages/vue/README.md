@@ -32,6 +32,9 @@ pnpm add @zh-keyboard/vue
 | defaultMode     | 'en' \| 'zh' \| 'hand' \| 'num'  | 'en'     | 默认的键盘模式                      |
 | enableHandwriting| boolean                          | false    | 是否启用手写输入                    |
 | position        | 'static' \| 'float' \| 'bottom'  | 'static' | 键盘定位模式                       |
+| floatMarginTop  | number                            | 10       | 浮动模式下键盘与输入框的距离        |
+| disableWhenNoFocus| boolean                         | true     | 当没有input获得焦点时是否禁用键盘   |
+| requireInputmode| boolean                          | false    | 是否只对带有 data-inputmode 属性的 input 弹出键盘 |
 | numKeys         | string[][]                   | -        | 数字键盘的行配置                    |
 
 ### 事件
@@ -57,7 +60,8 @@ setKeyboardConfig({
 ### 基础用法
 
 - 为了防止移动端设备弹出系统默认的键盘，建议在输入框上设置 `inputmode="none"` 属性。
-- 此外，可以通过在输入框上设置 `data-inputmode` 属性来指定组件默认打开的键盘类型 (可选值为 `'en'`, `'zh'`, `'hand'`, `'num'`)，具体键盘模式的说明请参考 `defaultMode` 属性。
+- 可以通过在输入框上设置 `data-inputmode` 属性来指定组件默认打开的键盘类型 (可选值为 `'en'`, `'zh'`, `'hand'`, `'num'`)，具体键盘模式的说明请参考 `defaultMode` 属性。
+- 设置 `:require-inputmode="true"` 可以让键盘**只**在带有 `data-inputmode` 属性的 input 上弹出，适用于需要精确控制哪些输入框使用虚拟键盘的场景。
 
 ```vue
 <script setup>

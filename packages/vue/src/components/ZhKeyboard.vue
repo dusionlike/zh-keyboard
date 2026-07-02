@@ -56,6 +56,14 @@ const props = defineProps({
   numKeys: {
     type: Array as () => string[][] || undefined,
   },
+  /**
+   * 是否要求 input 元素必须带有 data-inputmode 属性才弹出键盘
+   * @default false
+   */
+  requireInputmode: {
+    type: Boolean,
+    default: () => getKeyboardConfig().requireInputmode ?? false,
+  },
 })
 
 const emit = defineEmits<{
@@ -89,7 +97,13 @@ const inputElement = computed(() => {
 })
 
 const showKeyboard = computed(() => {
-  return props.position === 'static' || !!(activeElement.value && isInputElement(activeElement.value))
+  if (props.position === 'static')
+    return true
+  if (!activeElement.value || !isInputElement(activeElement.value))
+    return false
+  if (props.requireInputmode && !activeElement.value.dataset.inputmode)
+    return false
+  return true
 })
 
 const { height: keyboardHeight } = useElementSize(keyboardRef)

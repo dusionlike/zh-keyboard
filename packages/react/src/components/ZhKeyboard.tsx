@@ -18,6 +18,7 @@ interface ZhKeyboardProps {
   position?: 'static' | 'float' | 'bottom'
   floatMarginTop?: number
   disableWhenNoFocus?: boolean
+  requireInputmode?: boolean
   onKey?: (payload: KeyEvent) => void
   className?: string
   style?: React.CSSProperties
@@ -31,6 +32,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
     position = getKeyboardConfig().position ?? 'static',
     floatMarginTop = getKeyboardConfig().floatMarginTop ?? 10,
     disableWhenNoFocus = getKeyboardConfig().disableWhenNoFocus ?? true,
+    requireInputmode = getKeyboardConfig().requireInputmode ?? false,
     onKey,
     className,
     style,
@@ -72,8 +74,14 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
   }, [activeElement, position, keyboardHeight, floatMarginTop])
 
   const showKeyboard = useMemo(() => {
-    return position === 'static' || isInputElement(activeElement)
-  }, [activeElement, position])
+    if (position === 'static')
+      return true
+    if (!isInputElement(activeElement))
+      return false
+    if (requireInputmode && !activeElement?.dataset.inputmode)
+      return false
+    return true
+  }, [activeElement, position, requireInputmode])
 
   // 当showKeyboard或activeElement变化时更新位置
   useLayoutEffect(() => {
