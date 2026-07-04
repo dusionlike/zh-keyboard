@@ -12,6 +12,7 @@ registerHandwritingRecognizer(new ZhkRecognizer({
 
 registerPinyinEngine(new RimePinyinEngine({
   wasmDir: '/data',
+  dictVersion: '1.0.0',
 }))
 
 createRoot(document.getElementById('root')!).render(

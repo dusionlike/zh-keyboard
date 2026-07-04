@@ -55,7 +55,6 @@ setKeyboardConfig({
   defaultMode: 'zh',
   enableHandwriting: true,
   position: 'float',
-  wasmDir: '/rime', // RIME WASM 文件路径前缀（默认 '/rime'）
   // ... 其他配置
 })
 ```

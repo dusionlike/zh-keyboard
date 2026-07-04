@@ -24,7 +24,7 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
   setCurrentPinyin,
 }, ref) => {
   const engineRef = useRef<PinyinEngine | null>(null)
-  const [engineReady, setEngineReady] = useState(false)
+  const [engineLoading, setEngineLoading] = useState(true)
   const [pinyinState, setPinyinState] = useState<PinyinState | null>(null)
   const [isSelectionOpen, setIsSelectionOpen] = useState(false)
 
@@ -43,24 +43,34 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
   // 初始化引擎（仅执行一次）
   useLayoutEffect(() => {
     const engine = getPinyinEngine()
-    if (engine) {
-      // 使用外部注册的引擎，不持有所有权
-      engineRef.current = engine
-      setEngineReady(true)
-    } else {
+    if (!engine) {
       throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
     }
 
+    engineRef.current = engine
+    setEngineLoading(true)
+
+    // 等待引擎真正就绪
+    ;(async () => {
+      try {
+        await engine.whenReady?.()
+      } catch (e) {
+        console.error('拼音引擎就绪失败:', e)
+      }
+      setEngineLoading(false)
+    })()
+
     return () => {
+      engineRef.current?.syncData?.()
       engineRef.current?.processInput('')?.catch(() => {})
-      setEngineReady(false)
+      setEngineLoading(true)
     }
   }, [])
 
   // 处理拼音变化
   useLayoutEffect(() => {
     const eng = engineRef.current
-    if (!eng || !engineReady)
+    if (!eng || engineLoading)
       return
 
     if (currentPinyin === '') {
@@ -73,7 +83,7 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
       const state = await eng.processInput(currentPinyin)
       setPinyinState(state)
     })()
-  }, [currentPinyin, engineReady])
+  }, [currentPinyin, engineLoading])
 
   async function handleSelection(globalIndex: number) {
     const eng = engineRef.current
@@ -89,6 +99,16 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
       setPinyinState(null)
       setIsSelectionOpen(false)
     }
+  }
+
+  if (engineLoading) {
+    return (
+      <div className="zhk-candidate">
+        <div className="zhk-candidate__container zhk-candidate__container--loading">
+          <span className="zhk-candidate__loading-text">加载拼音引擎中…</span>
+        </div>
+      </div>
+    )
   }
 
   return (

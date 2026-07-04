@@ -14,6 +14,16 @@
     height: 100%;
     background-color: var(--background-color, #f7f8f9);
     padding: 0 8px;
+
+    &--loading {
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &__loading-text {
+    font-size: calc(var(--key-font-size) * 0.8);
+    color: var(--text-color-secondary, #999);
   }
 
   &__pinyin {

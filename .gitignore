@@ -23,3 +23,6 @@ release*
 *.sw?
 
 test-results
+.claude
+scripts
+*.bak

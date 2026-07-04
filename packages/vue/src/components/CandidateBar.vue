@@ -19,6 +19,7 @@ const currentPinyin = defineModel<string>({
 // 拼音引擎实例
 let engine: PinyinEngine | null = null
 
+const engineLoading = ref(true)
 const pinyinState = ref<PinyinState | null>(null)
 
 const candidates = computed(() => pinyinState.value?.candidates.map(c => c.text) ?? [])
@@ -31,6 +32,14 @@ onMounted(async () => {
     throw new Error('未找到拼音引擎实例，请确保已正确注册引擎')
   }
 
+  engineLoading.value = true
+  try {
+    await engine.whenReady?.()
+  } catch (e) {
+    console.error('拼音引擎就绪失败:', e)
+  }
+  engineLoading.value = false
+
   // 引擎就绪后，若已有拼音输入则立即处理
   if (currentPinyin.value) {
     pinyinState.value = await engine.processInput(currentPinyin.value)
@@ -38,13 +47,14 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  engine?.syncData?.()
   engine?.processInput('').catch(() => {})
   engine = null
 })
 
 watch(currentPinyin, async (newVal) => {
   const eng = engine
-  if (!eng)
+  if (!eng || engineLoading.value)
     return
 
   if (newVal === '') {
@@ -86,33 +96,38 @@ const showedPinyin = computed(() => {
 
 <template>
   <div class="zhk-candidate">
-    <div class="zhk-candidate__container">
-      <!-- 输入拼音显示 -->
-      <div v-if="showedPinyin" class="zhk-candidate__pinyin">
-        {{ showedPinyin }}
-      </div>
-
-      <div class="zhk-candidate__bottom-container">
-        <!-- 候选词列表 -->
-        <CandidateList
-          v-if="candidates.length > 0"
-          :candidates="candidates"
-          @select="handleSelection"
-        />
-        <button
-          v-if="candidates.length > 0"
-          class="zhk-candidate__more"
-          @click="isSelectionOpen = true"
-        >
-          <img src="../assets/icons/chevron-right.svg" alt="更多" />
-        </button>
-      </div>
+    <div v-if="engineLoading" class="zhk-candidate__container zhk-candidate__container--loading">
+      <span class="zhk-candidate__loading-text">加载拼音引擎中…</span>
     </div>
-    <CandidateSelection
-      v-if="isSelectionOpen"
-      :candidates="candidates"
-      @select="handleSelection"
-      @close="isSelectionOpen = false"
-    />
+    <template v-else>
+      <div class="zhk-candidate__container">
+        <!-- 输入拼音显示 -->
+        <div v-if="showedPinyin" class="zhk-candidate__pinyin">
+          {{ showedPinyin }}
+        </div>
+
+        <div class="zhk-candidate__bottom-container">
+          <!-- 候选词列表 -->
+          <CandidateList
+            v-if="candidates.length > 0"
+            :candidates="candidates"
+            @select="handleSelection"
+          />
+          <button
+            v-if="candidates.length > 0"
+            class="zhk-candidate__more"
+            @click="isSelectionOpen = true"
+          >
+            <img src="../assets/icons/chevron-right.svg" alt="更多" />
+          </button>
+        </div>
+      </div>
+      <CandidateSelection
+        v-if="isSelectionOpen"
+        :candidates="candidates"
+        @select="handleSelection"
+        @close="isSelectionOpen = false"
+      />
+    </template>
   </div>
 </template>

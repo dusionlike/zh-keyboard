@@ -100,28 +100,45 @@ const inputText = ref('')
 拼音输入功能需要初始化拼音引擎。推荐使用基于 RIME WASM 的拼音引擎：
 
 ```typescript
-import { createRimePinyinEngine } from '@zh-keyboard/pinyin'
+import { RimePinyinEngine } from '@zh-keyboard/pinyin'
 import { registerPinyinEngine } from '@zh-keyboard/vue'
 
 // 注册 RIME 拼音引擎
 registerPinyinEngine(new RimePinyinEngine({
-  wasmDir: '/data',
+  wasmDir: '/data', // rime-api.js/wasm 所在路径
+  dictVersion: '1.0.0', // 词库版本号（可选），版本一致时跳过下载直接使用
+  simplified: true, // 默认使用简体中文（可选，默认 true）
 }))
 ```
 
-worker写法参考 `examples`。
+### 引擎加载与就绪
 
-### WASM 文件部署
+`RimePinyinEngine` 在构造时自动开始加载，无需手动调用 `initialize()`。UI 层可通过 `whenReady()` 方法等待引擎就绪：
 
-需要将以下文件发布到 `public/data/` 目录：
-
-- `rime-api.wasm` - RIME 引擎本体
-- `default.yaml` - 默认配置
-- `luna_pinyin.schema.yaml` - 拼音方案
-- `luna_pinyin.table.bin` 、`luna_pinyin.prism.bin` 、`luna_pinyin.reverse.bin` - 词典文件
-
-这些文件来自 `@zh-keyboard/pinyin` 包的 `data/` 目录。
+```typescript
+const engine = new RimePinyinEngine({ wasmDir: '/data' })
+await engine.whenReady() // 等待加载完成
 ```
+
+`CandidateBar` 组件内部已集成 loading 状态，引擎加载期间会显示 **"加载拼音引擎中…"** 提示。
+
+### WASM 及词库文件部署
+
+需要将以下文件发布到 `public/data/` 目录（`wasmDir` 对应 `/data`）：
+
+- `rime-api.js` / `rime-api.wasm` / `rime-api.data` — RIME WASM 引擎
+- `source/default.yaml` — 默认配置
+- `source/luna_pinyin.schema.yaml` — 拼音方案
+- `source/luna_pinyin.dict.yaml` — 词典
+- `source/symbols.yaml` — 符号表
+- `source/essay.txt` — 语料
+
+这些文件来自 `@zh-keyboard/pinyin` 包的 `data/` 目录。引擎首次加载时会自动从 `source/` 编译词库并缓存到 IndexedDB，后续启动直接使用缓存，无需重新编译。
+
+> 若 `dictVersion` 有变更，引擎会自动检测版本不一致并重新下载编译；
+> 若版本一致则直接加载 IndexedDB 缓存，实现秒级启动。
+
+worker 写法参考 `examples`。
 
 ## 输入模式
 

@@ -39,7 +39,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@zh-keyboard/core": "workspace:*"
+    "@zh-keyboard/core": "workspace:*",
+    "core-js": "^3.49.0"
   },
   "devDependencies": {
     "tsdown": "^0.21.2",

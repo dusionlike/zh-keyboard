@@ -35,6 +35,11 @@ export interface PinyinEngine {
    */
   initialize(): Promise<void>
   /**
+   * 等待引擎就绪（加载/初始化/同步完成后返回）。
+   * UI 层可用此方法控制加载状态。
+   */
+  whenReady?(): Promise<void>
+  /**
    * 处理完整的拼音输入串，返回所有候选词列表（跨所有页）。
    * 引擎内部负责增量 vs 重置的优化，调用方只传完整拼音。
    * @param pinyin 完整的拼音字符串
@@ -55,10 +60,10 @@ export interface PinyinEngine {
   clearInput(): Promise<void>
 
   /**
-   * 切换简体/繁体输出（可选，引擎不支持时忽略）
-   * @param simplified true 为简体，false 为繁体
+   * 将用户词典数据持久化到存储（可选）。
+   * 推荐在键盘隐藏或销毁前调用，确保用户词库不丢失。
    */
-  setSimplified?(simplified: boolean): Promise<void>
+  syncData?(): Promise<void>
 
   /**
    * 销毁引擎，释放所有持有的资源

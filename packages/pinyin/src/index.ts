@@ -8,16 +8,13 @@ export type PinyinState = RimeState
 export type { PinyinEngine } from '@zh-keyboard/core'
 
 export interface RimePinyinEngineOptions extends RimeWasmOptions {
-  /**
-   * 是否默认使用简体中文
-   * @default true
-   */
-  simplified?: boolean
 }
 
 /**
  * 创建基于 RIME WASM 的拼音引擎，实现 PinyinEngine 通用接口。
  * 内部处理分页逻辑，processInput 返回所有页的候选词集合。
+ *
+ * 注意：词库已直接使用简体中文，不再依赖 OpenCC 繁简转换。
  */
 export class RimePinyinEngine implements PinyinEngine {
   private engine: RimeEngine | null = null
@@ -40,9 +37,17 @@ export class RimePinyinEngine implements PinyinEngine {
     }
     this.initPromise = (async () => {
       this.engine = await createRimeEngine(this.options)
-      this.engine.setOption('zh_simp', this.options.simplified ?? true)
     })()
     return this.initPromise
+  }
+
+  /**
+   * 等待引擎初始化完成。
+   * UI 层可用此方法控制加载状态：先显示 loading，await 此方法后隐藏 loading。
+   */
+  async whenReady(): Promise<void> {
+    const engine = await this.getEngine()
+    await engine.whenReady()
   }
 
   async processInput(fullPinyin: string) {
@@ -58,11 +63,11 @@ export class RimePinyinEngine implements PinyinEngine {
     if (fullPinyin.startsWith(this.prevRimeInput)) {
       // 增量输入：只发送新增部分
       const delta = fullPinyin.slice(this.prevRimeInput.length)
-      state = engine.processInput(delta)
+      state = await engine.processInput(delta)
     } else {
       // 删除或修改：清空后重新输入完整拼音
       engine.clearInput()
-      state = engine.processInput(fullPinyin)
+      state = await engine.processInput(fullPinyin)
     }
 
     this.prevRimeInput = fullPinyin
@@ -80,9 +85,12 @@ export class RimePinyinEngine implements PinyinEngine {
     return engine.clearInput()
   }
 
-  async setSimplified(simplified: boolean) {
+  /**
+   * 将用户词典数据持久化到 IndexedDB。
+   */
+  async syncData() {
     const engine = await this.getEngine()
-    return engine.setOption('zh_simp', simplified)
+    return engine.syncData()
   }
 
   async destroy() {

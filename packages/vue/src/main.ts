@@ -11,6 +11,7 @@ registerHandwritingRecognizer(new ZhkRecognizer({
 
 registerPinyinEngine(new RimePinyinEngine({
   wasmDir: '/data',
+  dictVersion: '1.0.0',
 }))
 
 setKeyboardConfig({

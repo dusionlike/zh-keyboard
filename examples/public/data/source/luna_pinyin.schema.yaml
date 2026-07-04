@@ -1,0 +1,74 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: luna_pinyin
+  name: 明月拼音
+  version: "0.15.wasm"
+  author:
+    - 佛振 <chen.sst@gmail.com>
+  description: |
+    基于 Rime 预设拼音输入方案的简化字版本。
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [ 中文, ABC ]
+  - name: full_shape
+    states: [ 半寬文字, 全寬文字 ]
+  - name: ascii_punct
+    states: [ 中文標點, 西文標點 ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - script_translator
+  filters:
+    - uniquifier
+
+speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcba
+  delimiter: " '"
+  algebra:
+    - erase/^xx$/
+    - abbrev/^([a-z]).+$/$1/
+    - abbrev/^([zcs]h).+$/$1/
+    - derive/^([nl])ve$/$1ue/correction
+    - derive/^([jqxy])u/$1v/correction
+    - derive/un$/uen/correction
+    - derive/ui$/uei/correction
+    - derive/iu$/iou/correction
+    - derive/([aeiou])ng$/$1gn/correction
+    - derive/([dtngkhrzcs])o(u|ng)$/$1o/correction
+    - derive/ong$/on/correction
+    - derive/ao$/oa/correction
+    - derive/([iu])a(o|ng?)$/a$1$2/correction
+
+translator:
+  dictionary: luna_pinyin
+  preedit_format:
+    - xform/([nljqxy])v/$1ü/
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
+
+recognizer:
+  import_preset: default
