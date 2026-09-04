@@ -1,0 +1,42 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: luna_pinyin
+  name: 明月拼音
+  version: "0.15.wasm"
+  author:
+    - 佛振 <chen.sst@gmail.com>
+  description: |
+    基于 Rime 预设拼音输入方案的简化字版本。
+
+engine:
+  processors:
+    - speller
+  segmentors:
+    - abc_segmentor
+  translators:
+    - script_translator
+
+speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcba
+  delimiter: " '"
+  algebra:
+    - erase/^xx$/
+    - abbrev/^([a-z]).+$/$1/
+    - abbrev/^([zcs]h).+$/$1/
+    - derive/^([nl])ve$/$1ue/correction
+    - derive/^([jqxy])u/$1v/correction
+    - derive/un$/uen/correction
+    - derive/ui$/uei/correction
+    - derive/iu$/iou/correction
+    - derive/([aeiou])ng$/$1gn/correction
+    - derive/([dtngkhrzcs])o(u|ng)$/$1o/correction
+    - derive/ong$/on/correction
+    - derive/ao$/oa/correction
+    - derive/([iu])a(o|ng?)$/a$1$2/correction
+
+translator:
+  dictionary: luna_pinyin
+  preedit_format:
+    - xform/([nljqxy])v/$1ü/
