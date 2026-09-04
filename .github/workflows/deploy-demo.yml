@@ -26,6 +26,9 @@ jobs:
         run: |
           pnpm install
           pnpm run examples:build
+          test -f examples/dist/data/rime-api.wasm
+          test -f examples/dist/data/source/default.yaml
+          test -f examples/dist/models/handwrite/model.json
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4

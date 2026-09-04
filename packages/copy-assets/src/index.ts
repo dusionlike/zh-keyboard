@@ -40,28 +40,46 @@ async function copyAssetDirectory(sourceDir: string, targetDir: string): Promise
   stdout.write(`Copied ${sourceDir} -> ${targetDir}\n`)
 }
 
-async function copyAssets(workspaceDir: string, appDir: string): Promise<void> {
+async function copyAssets(workspaceDir: string, appDir: string, outputDir?: string): Promise<void> {
   const appPath = isAbsolute(appDir) ? resolve(appDir) : resolve(workspaceDir, appDir)
   assertWorkspacePath(workspaceDir, appPath)
 
   const pinyinDataDir = getPackageAssetDir('@zh-keyboard/pinyin/data/rime-api.js')
   const recognizerModelsDir = getPackageAssetDir('@zh-keyboard/recognizer/models/dict.txt')
-  const publicDir = resolve(appPath, 'public')
+  const outputPath = outputDir
+    ? (isAbsolute(outputDir) ? resolve(outputDir) : resolve(workspaceDir, outputDir))
+    : resolve(appPath, 'public')
+  assertWorkspacePath(workspaceDir, outputPath)
 
-  await copyAssetDirectory(pinyinDataDir, resolve(publicDir, 'data'))
-  await copyAssetDirectory(recognizerModelsDir, resolve(publicDir, 'models'))
+  await copyAssetDirectory(pinyinDataDir, resolve(outputPath, 'data'))
+  await copyAssetDirectory(recognizerModelsDir, resolve(outputPath, 'models'))
 }
 
 const workspaceDir = findWorkspaceDir()
-const [target] = argv.slice(2).filter(argument => argument !== '--')
+const args = argv.slice(2).filter(argument => argument !== '--')
+const isAll = args.includes('--all')
+const targetIndex = args.indexOf('--target')
+const outputIndex = args.indexOf('--output')
+const target = targetIndex === -1 ? undefined : args[targetIndex + 1]
+const outputDir = outputIndex === -1 ? undefined : args[outputIndex + 1]
+
+if (targetIndex !== -1 && target === undefined) {
+  throw new Error('--target 缺少目标目录')
+}
+if (outputIndex !== -1 && outputDir === undefined) {
+  throw new Error('--output 缺少输出目录')
+}
+if (isAll && (target !== undefined || outputDir !== undefined)) {
+  throw new Error('--all 不能和 --target 或 --output 同时使用')
+}
 
 async function main(): Promise<void> {
-  if (target === '--all') {
+  if (isAll) {
     for (const appDir of ['packages/vue', 'packages/react', 'examples']) {
       await copyAssets(workspaceDir, appDir)
     }
   } else {
-    await copyAssets(workspaceDir, target ?? cwd())
+    await copyAssets(workspaceDir, target ?? cwd(), outputDir)
   }
 }
 
