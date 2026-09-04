@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
+import { copyAssetsPlugin } from '@zh-keyboard/copy-assets'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
@@ -10,7 +11,7 @@ export default defineConfig((env) => {
       server: {
         port: 5174,
       },
-      plugins: [vue()],
+      plugins: [vue(), copyAssetsPlugin({ build: false })],
     }
   } else {
     return {

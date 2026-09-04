@@ -18,13 +18,13 @@ jobs:
           node-version: '20'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 10.8.1
 
       - name: Install and Build 🔧
         run: |
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm run examples:build
           test -f examples/dist/data/rime-api.wasm
           test -f examples/dist/data/source/default.yaml

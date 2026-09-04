@@ -40,7 +40,6 @@
     "dist"
   ],
   "scripts": {
-    "predev": "pnpm --filter @zh-keyboard/copy-assets run copy -- --target packages/vue",
     "dev": "vite --host",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"

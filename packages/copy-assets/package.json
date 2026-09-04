@@ -2,8 +2,11 @@
   "name": "@zh-keyboard/copy-assets",
   "private": true,
   "type": "module",
-  "scripts": {
-    "copy": "tsx src/index.ts"
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
   },
   "dependencies": {
     "@zh-keyboard/pinyin": "workspace:*",
@@ -11,7 +14,7 @@
   },
   "devDependencies": {
     "@types/node": "22",
-    "tsx": "^4.19.3",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "vite": "^8.0.0"
   }
 }
