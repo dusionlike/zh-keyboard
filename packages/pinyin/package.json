@@ -24,7 +24,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    }
+    },
+    "./data/*": "./data/*"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",

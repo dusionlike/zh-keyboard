@@ -20,6 +20,8 @@
 
 <img src="qrcode.jpg" alt="联系二维码" width="50%">
 
+当前 npm 包同时包含默认模型资源，位于 `models/` 目录。使用时请将该目录部署到应用的静态资源目录，或传入你自己的 `modelPath` 和 `dictPath`。
+
 ## 安装
 
 ```bash

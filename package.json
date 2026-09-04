@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -r --parallel --filter=./packages/* run dev",
+    "copy:assets": "pnpm --filter @zh-keyboard/copy-assets run copy -- --all",
     "build": "pnpm -r --filter=./packages/* run build",
     "test": "pnpm -r --filter=./packages/* run test",
     "test:e2e": "playwright test",

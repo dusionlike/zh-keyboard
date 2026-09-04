@@ -26,3 +26,11 @@ test-results
 .claude
 scripts
 *.bak
+
+# Generated demo assets copied from @zh-keyboard/pinyin and @zh-keyboard/recognizer
+examples/public/data/
+examples/public/models/
+packages/vue/public/data/
+packages/vue/public/models/
+packages/react/public/data/
+packages/react/public/models/

@@ -1,0 +1,17 @@
+{
+  "name": "@zh-keyboard/copy-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "copy": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@zh-keyboard/pinyin": "workspace:*",
+    "@zh-keyboard/recognizer": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22",
+    "tsx": "^4.19.3",
+    "typescript": "~5.8.3"
+  }
+}

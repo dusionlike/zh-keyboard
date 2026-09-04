@@ -40,6 +40,7 @@
     "dist"
   ],
   "scripts": {
+    "predev": "pnpm --filter @zh-keyboard/copy-assets run copy -- packages/react",
     "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

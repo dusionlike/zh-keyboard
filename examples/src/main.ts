@@ -6,8 +6,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 registerHandwritingRecognizer(new ZhkRecognizer({
-  modelPath: new URL('/models/handwrite/model.json', import.meta.url).href,
-  dictPath: new URL('/models/dict.txt', import.meta.url).href,
+  modelPath: new URL('models/handwrite/model.json', document.baseURI).href,
+  dictPath: new URL('models/dict.txt', document.baseURI).href,
 }))
 
 const pinyinEngineWorker = new Worker(new URL('./pinyin-engine.worker.ts', import.meta.url), { type: 'module' })
