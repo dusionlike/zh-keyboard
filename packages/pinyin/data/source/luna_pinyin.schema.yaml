@@ -18,6 +18,9 @@ engine:
   translators:
     - script_translator
 
+menu:
+  page_size: 10
+
 speller:
   alphabet: zyxwvutsrqponmlkjihgfedcba
   delimiter: " '"

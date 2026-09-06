@@ -21,8 +21,12 @@ let engine: PinyinEngine | null = null
 
 const engineLoading = ref(true)
 const pinyinState = ref<PinyinState | null>(null)
+const allCandidatesState = ref<PinyinState | null>(null)
+const isAllCandidatesLoading = ref(false)
+let allCandidatesRequestId = 0
 
 const candidates = computed(() => pinyinState.value?.candidates.map(c => c.text) ?? [])
+const selectionCandidates = computed(() => allCandidatesState.value?.candidates.map(c => c.text) ?? candidates.value)
 
 const isSelectionOpen = ref(false)
 
@@ -57,6 +61,12 @@ watch(currentPinyin, async (newVal) => {
   if (!eng || engineLoading.value)
     return
 
+  // 全量候选只对当前拼音有效，拼音变化后必须丢弃旧结果。
+  allCandidatesRequestId++
+  allCandidatesState.value = null
+  isAllCandidatesLoading.value = false
+  isSelectionOpen.value = false
+
   if (newVal === '') {
     eng.processInput('').catch(() => {})
     pinyinState.value = null
@@ -66,12 +76,49 @@ watch(currentPinyin, async (newVal) => {
   pinyinState.value = await eng.processInput(newVal)
 })
 
+async function handleShowAllCandidates() {
+  const eng = engine
+  const state = pinyinState.value
+  const input = currentPinyin.value
+  if (!eng || !state || !input || isAllCandidatesLoading.value)
+    return
+
+  if (allCandidatesState.value) {
+    isSelectionOpen.value = true
+    return
+  }
+
+  if (!eng.getAllCandidates) {
+    // 兼容未实现全量候选接口的自定义引擎。
+    allCandidatesState.value = state
+    isSelectionOpen.value = true
+    return
+  }
+
+  const requestId = ++allCandidatesRequestId
+  isAllCandidatesLoading.value = true
+  try {
+    const allState = await eng.getAllCandidates()
+    if (requestId !== allCandidatesRequestId || engine !== eng || currentPinyin.value !== input)
+      return
+
+    allCandidatesState.value = allState
+    isSelectionOpen.value = true
+  } catch (e) {
+    console.error('获取全部候选词失败:', e)
+  } finally {
+    if (requestId === allCandidatesRequestId)
+      isAllCandidatesLoading.value = false
+  }
+}
+
 async function handleSelection(globalIndex: number) {
   if (!engine)
     return
 
   const state = await engine.pickCandidate(globalIndex)
   pinyinState.value = state
+  allCandidatesState.value = null
 
   if (!state.preeditBody) {
     emit('input', state.committed || '')
@@ -116,7 +163,8 @@ const showedPinyin = computed(() => {
           <button
             v-if="candidates.length > 0"
             class="zhk-candidate__more"
-            @click="isSelectionOpen = true"
+            :disabled="isAllCandidatesLoading"
+            @click="handleShowAllCandidates"
           >
             <img src="../assets/icons/chevron-right.svg" alt="更多" />
           </button>
@@ -124,7 +172,7 @@ const showedPinyin = computed(() => {
       </div>
       <CandidateSelection
         v-if="isSelectionOpen"
-        :candidates="candidates"
+        :candidates="selectionCandidates"
         @select="handleSelection"
         @close="isSelectionOpen = false"
       />

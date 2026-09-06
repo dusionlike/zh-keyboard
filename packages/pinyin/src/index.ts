@@ -12,7 +12,7 @@ export interface RimePinyinEngineOptions extends RimeWasmOptions {
 
 /**
  * 创建基于 RIME WASM 的拼音引擎，实现 PinyinEngine 通用接口。
- * 内部处理分页逻辑，processInput 返回所有页的候选词集合。
+ * processInput 返回当前页的候选词集合，全部候选词按需获取。
  *
  * 注意：词库已直接使用简体中文，不再依赖 OpenCC 繁简转换。
  */
@@ -78,6 +78,11 @@ export class RimePinyinEngine implements PinyinEngine {
   async pickCandidate(index: number) {
     const engine = await this.getEngine()
     return engine.pickCandidate(index)
+  }
+
+  async getAllCandidates() {
+    const engine = await this.getEngine()
+    return engine.getAllCandidates()
   }
 
   async clearInput() {

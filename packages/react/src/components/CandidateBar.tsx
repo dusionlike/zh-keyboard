@@ -7,6 +7,10 @@ import CandidateList from './CandidateList'
 import CandidateSelection from './CandidateSelection'
 import '../styles/CandidateBar.scss'
 
+function invalidateCandidateRequest(requestIdRef: { current: number }) {
+  requestIdRef.current++
+}
+
 interface CandidateBarProps {
   currentPinyin: string
   onKey: (payload: KeyEvent) => void
@@ -26,9 +30,16 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
   const engineRef = useRef<PinyinEngine | null>(null)
   const [engineLoading, setEngineLoading] = useState(true)
   const [pinyinState, setPinyinState] = useState<PinyinState | null>(null)
+  const [allCandidatesState, setAllCandidatesState] = useState<PinyinState | null>(null)
+  const [isAllCandidatesLoading, setIsAllCandidatesLoading] = useState(false)
+  const allCandidatesRequestIdRef = useRef(0)
   const [isSelectionOpen, setIsSelectionOpen] = useState(false)
 
   const candidates = useMemo(() => pinyinState?.candidates.map(c => c.text) ?? [], [pinyinState])
+  const selectionCandidates = useMemo(
+    () => allCandidatesState?.candidates.map(c => c.text) ?? candidates,
+    [allCandidatesState, candidates],
+  )
 
   const showedPinyin = useMemo(() => {
     if (!pinyinState)
@@ -61,6 +72,7 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
     })()
 
     return () => {
+      invalidateCandidateRequest(allCandidatesRequestIdRef)
       engineRef.current?.syncData?.()
       engineRef.current?.processInput('')?.catch(() => {})
       setEngineLoading(true)
@@ -72,6 +84,12 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
     const eng = engineRef.current
     if (!eng || engineLoading)
       return
+
+    // 全量候选只对当前拼音有效，拼音变化后必须丢弃旧结果。
+    allCandidatesRequestIdRef.current++
+    setAllCandidatesState(null)
+    setIsAllCandidatesLoading(false)
+    setIsSelectionOpen(false)
 
     if (currentPinyin === '') {
       eng.processInput('')?.catch(() => {})
@@ -85,6 +103,43 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
     })()
   }, [currentPinyin, engineLoading])
 
+  async function handleShowAllCandidates() {
+    const eng = engineRef.current
+    const state = pinyinState
+    const input = currentPinyin
+    if (!eng || !state || !input || isAllCandidatesLoading)
+      return
+
+    if (allCandidatesState) {
+      setIsSelectionOpen(true)
+      return
+    }
+
+    const getAllCandidates = eng.getAllCandidates
+    if (!getAllCandidates) {
+      // 兼容未实现全量候选接口的自定义引擎。
+      setAllCandidatesState(state)
+      setIsSelectionOpen(true)
+      return
+    }
+
+    const requestId = ++allCandidatesRequestIdRef.current
+    setIsAllCandidatesLoading(true)
+    try {
+      const allState = await getAllCandidates.call(eng)
+      if (requestId !== allCandidatesRequestIdRef.current || engineRef.current !== eng)
+        return
+
+      setAllCandidatesState(allState)
+      setIsSelectionOpen(true)
+    } catch (e) {
+      console.error('获取全部候选词失败:', e)
+    } finally {
+      if (requestId === allCandidatesRequestIdRef.current)
+        setIsAllCandidatesLoading(false)
+    }
+  }
+
   async function handleSelection(globalIndex: number) {
     const eng = engineRef.current
     if (!eng)
@@ -92,6 +147,8 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
 
     const state = await eng.pickCandidate(globalIndex)
     setPinyinState(state)
+    allCandidatesRequestIdRef.current++
+    setAllCandidatesState(null)
 
     if (!state.preeditBody) {
       onInput(state.committed || '')
@@ -129,7 +186,8 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
           {candidates.length > 0 && (
             <button
               className="zhk-candidate__more"
-              onClick={() => setIsSelectionOpen(true)}
+              disabled={isAllCandidatesLoading}
+              onClick={handleShowAllCandidates}
             >
               <img src={chevronRight} alt="更多" />
             </button>
@@ -138,7 +196,7 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
       </div>
       {isSelectionOpen && (
         <CandidateSelection
-          candidates={candidates}
+          candidates={selectionCandidates}
           onSelect={handleSelection}
           onClose={() => setIsSelectionOpen(false)}
         />

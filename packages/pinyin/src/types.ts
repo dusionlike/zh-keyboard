@@ -29,10 +29,10 @@ export interface RimeState {
 export interface RimeEngine {
   /** 发送按键序列（如 "nihao"）并获取更新后的状态。 */
   processInput(keys: string): Promise<RimeState>
-  /** 在当前页按索引选择候选词。选词后自动持久化到 IndexedDB。 */
+  /** 按候选列表的绝对索引选择候选词。选词后自动持久化到 IndexedDB。 */
   pickCandidate(index: number): Promise<RimeState>
-  /** 翻到候选词的下一页或上一页。 */
-  flipPage(forward: boolean): Promise<RimeState>
+  /** 请求当前输入的全部候选词，不改变当前页。 */
+  getAllCandidates(): Promise<RimeState>
   /** 清除当前输入。 */
   clearInput(): Promise<void>
   /** 设置布尔选项（如 "ascii_mode"、"zh_simp"）。 */

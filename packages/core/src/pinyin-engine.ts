@@ -40,12 +40,18 @@ export interface PinyinEngine {
    */
   whenReady?(): Promise<void>
   /**
-   * 处理完整的拼音输入串，返回所有候选词列表（跨所有页）。
+   * 处理完整的拼音输入串，返回当前页的候选词列表。
    * 引擎内部负责增量 vs 重置的优化，调用方只传完整拼音。
    * @param pinyin 完整的拼音字符串
-   * @returns 候选词状态，包括所有页的候选词集合和分页信息
+   * @returns 候选词状态，包括当前页的候选词集合和分页信息
    */
   processInput(pinyin: string): Promise<PinyinState | null>
+
+  /**
+   * 按需请求当前输入的全部候选词，不改变当前页。
+   * 不支持该能力的自定义引擎可以省略此方法。
+   */
+  getAllCandidates?(): Promise<PinyinState>
 
   /**
    * 按全局索引选择候选词，返回已提交的文本。

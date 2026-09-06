@@ -221,9 +221,9 @@ export async function createRimeEngine(
       })
     },
 
-    async flipPage(forward: boolean): Promise<RimeState> {
+    async getAllCandidates(): Promise<RimeState> {
       return withMutex(async () => {
-        return callJsonAsync('rime_wasm_flip_page', ['number'], [forward ? 0 : 1])
+        return callJsonAsync('rime_wasm_get_all_candidates', [], [])
       })
     },
 
