@@ -1,7 +1,7 @@
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@reactuses/core'
-import { CanvasDrawer, getHandwritingRecognizer } from '@zh-keyboard/core'
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { CanvasDrawer, getHandwritingRecognizer, LatestTaskQueue } from '@zh-keyboard/core'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
@@ -18,29 +18,35 @@ interface HandwritingInputProps {
 const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitialized, recognizerProgress, onKey, onExit }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasDrawer = useRef<CanvasDrawer | null>(null)
-  const isRecognizing = useRef(false)
+  const recognitionQueue = useRef(new LatestTaskQueue())
   const [candidates, setCandidates] = useState<string[]>([])
 
   const { startRepeat, stopRepeat } = useKeyRepeater()
 
   const recognizeStroke = useCallback(async () => {
-    if (!canvasDrawer.current || canvasDrawer.current.getStrokeData().length === 0 || isRecognizing.current)
+    if (!canvasDrawer.current || canvasDrawer.current.getStrokeData().length === 0)
       return
 
     const recognizer = getHandwritingRecognizer()
     if (recognizer) {
-      isRecognizing.current = true
       try {
         const strokeData = [...canvasDrawer.current.getStrokeData()]
-        const results = await recognizer.recognize(strokeData)
-        setCandidates(results)
+        const results = await recognitionQueue.current.submit(() => recognizer.recognize(strokeData))
+        if (results !== undefined) {
+          setCandidates(results)
+        }
       } catch (error) {
         console.error('识别笔迹失败:', error)
-      } finally {
-        isRecognizing.current = false
       }
     } else {
       console.warn('手写识别服务不可用')
+    }
+  }, [])
+
+  useEffect(() => {
+    const queue = recognitionQueue.current
+    return () => {
+      queue.clearPending()
     }
   }, [])
 

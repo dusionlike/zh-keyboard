@@ -10,6 +10,7 @@ export default antfu(
       'src/auTem/aumap.json',
       '**/public/**',
       'dist/**',
+      'packages/recognizer/models/**',
       'packages/pinyin/data/**',
     ],
   },

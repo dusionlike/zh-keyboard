@@ -32,9 +32,8 @@ function syncfs(module: EmscriptenModule, populate: boolean): Promise<void> {
 }
 
 async function loadModule(wasmDir: string): Promise<EmscriptenModule> {
-  const scriptUrl = `${wasmDir}/rime-api.js`
   const createRimeModule = (
-    await import(/* @vite-ignore */ /* webpackIgnore: true */ scriptUrl)
+    await import(/* @vite-ignore */ /* webpackIgnore: true */ `${wasmDir}/rime-api.js`)
   ).default
   return createRimeModule({
     locateFile(file: string) {

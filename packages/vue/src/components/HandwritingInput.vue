@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@vueuse/core'
-import { CanvasDrawer, getHandwritingRecognizer } from '@zh-keyboard/core'
+import { CanvasDrawer, getHandwritingRecognizer, LatestTaskQueue } from '@zh-keyboard/core'
 import { nextTick, onUnmounted, ref, watchEffect } from 'vue'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import CandidateList from './CandidateList.vue'
@@ -19,8 +19,7 @@ const emit = defineEmits<{
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let canvasDrawer: CanvasDrawer | null = null
-// 是否正在识别中
-const isRecognizing = ref(false)
+const recognitionQueue = new LatestTaskQueue()
 
 // 监听画布自身尺寸变化
 const { width: canvasWidth, height: canvasHeight } = useElementSize(canvasRef)
@@ -54,23 +53,21 @@ const { startRepeat, stopRepeat } = useKeyRepeater()
 
 // 识别当前笔迹
 async function recognizeStroke() {
-  if (!canvasDrawer || canvasDrawer.getStrokeData().length === 0 || isRecognizing.value)
+  if (!canvasDrawer || canvasDrawer.getStrokeData().length === 0)
     return
 
   const recognizer = getHandwritingRecognizer()
   if (recognizer) {
-    isRecognizing.value = true
-
     try {
       // 将 readonly array 转换为 mutable array
       const strokeData = [...canvasDrawer.getStrokeData()]
-      const results = await recognizer.recognize(strokeData)
+      const results = await recognitionQueue.submit(() => recognizer.recognize(strokeData))
 
-      candidates.value = results
+      if (results !== undefined) {
+        candidates.value = results
+      }
     } catch (error) {
       console.error('识别笔迹失败:', error)
-    } finally {
-      isRecognizing.value = false
     }
   } else {
     console.warn('手写识别服务不可用')
@@ -82,6 +79,7 @@ onUnmounted(() => {
   if (canvasDrawer) {
     canvasDrawer.destroy()
   }
+  recognitionQueue.clearPending()
 })
 
 watchEffect(() => {
