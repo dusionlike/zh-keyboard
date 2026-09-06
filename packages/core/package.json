@@ -1,6 +1,6 @@
 {
   "name": "@zh-keyboard/core",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "中文虚拟键盘组件库核心包",
   "author": "dusionlike",
   "license": "Apache 2.0",
