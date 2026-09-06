@@ -1,6 +1,7 @@
 {
   "name": "@zh-keyboard/copy-assets",
   "type": "module",
+  "version": "2.1.0",
   "private": true,
   "exports": {
     ".": {
