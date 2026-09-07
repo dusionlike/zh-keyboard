@@ -4,8 +4,6 @@ import { onMounted, onUnmounted, ref } from 'vue'
 export function useHandwritingRecognizer(enableHandwriting = false) {
   // 是否初始化了手写识别服务
   const recognizerInitialized = ref(false)
-  // 初始化进度
-  const recognizerProgress = ref(0)
 
   /**
    * 初始化手写识别服务
@@ -14,11 +12,7 @@ export function useHandwritingRecognizer(enableHandwriting = false) {
     const recognizer = getHandwritingRecognizer()
     if (recognizer) {
       try {
-        recognizerInitialized.value = await recognizer.initialize({
-          onProgress: (progress) => {
-            recognizerProgress.value = progress
-          },
-        })
+        recognizerInitialized.value = await recognizer.initialize()
       } catch (error) {
         console.error('初始化手写识别服务失败:', error)
         recognizerInitialized.value = false
@@ -56,6 +50,5 @@ export function useHandwritingRecognizer(enableHandwriting = false) {
 
   return {
     recognizerInitialized,
-    recognizerProgress,
   }
 }

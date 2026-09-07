@@ -10,12 +10,11 @@ import '../styles/HandwritingInput.scss'
 
 interface HandwritingInputProps {
   recognizerInitialized: boolean
-  recognizerProgress: number
   onKey: (payload: KeyEvent) => void
   onExit: () => void
 }
 
-const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitialized, recognizerProgress, onKey, onExit }) => {
+const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitialized, onKey, onExit }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasDrawer = useRef<CanvasDrawer | null>(null)
   const recognitionQueue = useRef(new LatestTaskQueue())
@@ -150,12 +149,6 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
                 <div className="handwriting-loading">
                   <div className="loading-text">
                     正在加载手写识别...
-                  </div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${recognizerProgress * 100}%` }}></div>
-                  </div>
-                  <div className="progress-text">
-                    {Math.round(recognizerProgress * 100)}%
                   </div>
                 </div>
               )

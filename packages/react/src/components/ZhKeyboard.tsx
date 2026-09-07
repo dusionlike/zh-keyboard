@@ -47,7 +47,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
 
   const [_, keyboardHeight] = useElementSize(keyboardRef)
 
-  const { recognizerInitialized, recognizerProgress } = useHandwritingRecognizer(enableHandwriting)
+  const { recognizerInitialized } = useHandwritingRecognizer(enableHandwriting)
 
   useEffect(() => {
     // 仅在基础输入模式下更新 previousModeRef，以便 goBack 正确返回
@@ -189,7 +189,6 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
               {mode === 'hand' && (
                 <HandwritingInput
                   recognizerInitialized={recognizerInitialized}
-                  recognizerProgress={recognizerProgress}
                   onKey={handleKeyEvent}
                   onExit={goBack}
                 />

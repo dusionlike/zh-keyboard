@@ -1,6 +1,6 @@
 import type { GraphModel } from '@tensorflow/tfjs-converter'
 import type { Tensor } from '@tensorflow/tfjs-core'
-import type { HandwritingRecognizer, RecognizerInitOptions } from '@zh-keyboard/core'
+import type { HandwritingRecognizer } from '@zh-keyboard/core'
 import { MathBackendCPU } from '@tensorflow/tfjs-backend-cpu/dist/backend_cpu'
 import { _fusedMatMulConfig } from '@tensorflow/tfjs-backend-cpu/dist/kernels/_FusedMatMul'
 import { addConfig } from '@tensorflow/tfjs-backend-cpu/dist/kernels/Add'
@@ -85,7 +85,7 @@ export class ZhkRecognizer implements HandwritingRecognizer {
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!
   }
 
-  async initialize(options?: RecognizerInitOptions) {
+  async initialize() {
     const backendReady = await setBackend(this.backend)
     if (!backendReady) {
       throw new TypeError(`TensorFlow.js backend is not available: ${this.backend}`)
@@ -96,7 +96,6 @@ export class ZhkRecognizer implements HandwritingRecognizer {
     this.dict = text.split('\n')
     this.model = await loadGraphModel(this.modelPath, {
       streamWeights: true,
-      onProgress: options?.onProgress,
     })
     // 预热模型，避免第一次真实识别承担初始化开销。
     await this.recognize([10, 10, 0, 20, 20, 1])

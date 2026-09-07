@@ -78,7 +78,7 @@ const isSelectionOpen = ref(false)
 const keyboardPosition = ref<KeyboardPosition | null>(null)
 const keyboardRef = ref<HTMLElement | null>(null)
 
-const { recognizerInitialized, recognizerProgress } = useHandwritingRecognizer(props.enableHandwriting)
+const { recognizerInitialized } = useHandwritingRecognizer(props.enableHandwriting)
 
 // 监听mode变化，保存上一次的值
 watch(mode, (newMode, oldMode) => {
@@ -206,7 +206,6 @@ function handleRecognize(results: string[]) {
       <HandwritingInput
         v-if="mode === 'hand'"
         :recognizer-initialized
-        :recognizer-progress
         @key="handleKeyEvent"
         @exit="goBack"
         @recognize="handleRecognize"

@@ -9,7 +9,6 @@ import '../styles/HandwritingInput.scss'
 
 const props = defineProps<{
   recognizerInitialized: boolean
-  recognizerProgress: number
 }>()
 
 const emit = defineEmits<{
@@ -151,19 +150,12 @@ function handleSelection(index: number) {
         </button>
       </div>
       <div class="handwriting-canvas-container">
-        <!-- 进度条显示 -->
         <div
           v-if="!recognizerInitialized"
           class="handwriting-loading"
         >
           <div class="loading-text">
             正在加载手写识别...
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: `${recognizerProgress * 100}%` }"></div>
-          </div>
-          <div class="progress-text">
-            {{ Math.round(recognizerProgress * 100) }}%
           </div>
         </div>
         <!-- 画布显示 -->
