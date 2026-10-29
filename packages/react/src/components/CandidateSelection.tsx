@@ -28,7 +28,7 @@ const CandidateSelection: React.FC<CandidateSelectionProps> = ({ candidates, onS
         ))}
       </div>
       <div className="zhk-selection__func">
-        <button className="zhk-selection__func-btn" onClick={onClose}>
+        <button type="button" className="zhk-selection__func-btn" aria-label="收起候选词" onClick={onClose}>
           返回
         </button>
       </div>

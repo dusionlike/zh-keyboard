@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
 
-async function mockRecognizer(page: Page, recognitionDelay = 0) {
+export async function mockRecognizer(page: Page, recognitionDelay = 0, candidates?: string[]) {
   await page.context().route('**/handwriting-recognizer.worker.ts*', async (route) => {
     const response = await route.fetch()
     const source = await response.text()
@@ -18,7 +18,7 @@ async function mockRecognizer(page: Page, recognitionDelay = 0) {
           async recognize(strokes) {
             await new Promise(resolve => setTimeout(resolve, ${recognitionDelay}));
             const count = strokes.filter((value, index) => index % 3 === 2 && value === 1).length;
-            return count > 1 ? ['二', '三'] : ['你', '好'];
+            return ${candidates ? JSON.stringify(candidates) : 'count > 1 ? [\'二\', \'三\'] : [\'你\', \'好\']'};
           },
           async close() {},
         });
@@ -27,7 +27,7 @@ async function mockRecognizer(page: Page, recognitionDelay = 0) {
   })
 }
 
-async function openHandwriting(page: Page, delay = 1000) {
+export async function openHandwriting(page: Page, delay = 1000) {
   await page.goto('/')
   const slider = page.locator('#handwriting-delay')
   await expect(slider).toHaveValue('1000')
@@ -42,7 +42,7 @@ async function openHandwriting(page: Page, delay = 1000) {
   await expect(page.locator('canvas.handwriting-canvas')).toBeVisible()
 }
 
-async function drawStroke(page: Page, offset = 0) {
+export async function drawStroke(page: Page, offset = 0) {
   const box = await page.locator('canvas.handwriting-canvas').boundingBox()
   if (!box) {
     throw new Error('Handwriting canvas is not visible')

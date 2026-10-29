@@ -1,4 +1,5 @@
 .handwriting-input {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -7,8 +8,16 @@
   gap: var(--gap);
   box-sizing: border-box;
 
+  // The shared candidate bar occupies one row, not the full handwriting area.
+  > .zhk-candidate {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+
   .handwriting-content {
     flex: 7;
+    min-height: 0;
     display: flex;
     flex-direction: row;
     align-items: flex-start;

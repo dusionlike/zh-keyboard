@@ -4,7 +4,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import keyboardBackspace from '../assets/icons/keyboard-backspace.svg'
 import keyboardReturn from '../assets/icons/keyboard-return.svg'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
-import CandidateList from './CandidateList'
+import CandidatePanel from './CandidatePanel'
 import '../styles/HandwritingInput.scss'
 
 interface HandwritingInputProps {
@@ -34,6 +34,7 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
   inputRef.current = inputElement
   delayRef.current = handwritingDelay
   const [candidates, setCandidates] = useState<string[]>([])
+  const [isSelectionOpen, setIsSelectionOpen] = useState(false)
 
   const { startRepeat, stopRepeat } = useKeyRepeater()
 
@@ -53,7 +54,11 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
     const session = new HandwritingSession({
       queue: recognitionQueue.current,
       recognize: strokeData => getHandwritingRecognizer()?.recognize(strokeData) ?? Promise.resolve([]),
-      onCandidates: setCandidates,
+      onCandidates: (results) => {
+        setCandidates(results)
+        if (results.length === 0)
+          setIsSelectionOpen(false)
+      },
       onPreview: candidate => composition.current?.update(inputRef.current, candidate),
       onCommit: candidate => composition.current?.commit(candidate, () => onKeyRef.current({ key: candidate })),
       onClear: () => drawer.clearCanvas(),
@@ -69,6 +74,7 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
     canvasDrawer.current = drawer
     handwritingSession.current = session
     setCandidates([])
+    setIsSelectionOpen(false)
   }, [])
 
   useLayoutEffect(() => {
@@ -109,7 +115,13 @@ const HandwritingInput: React.FC<HandwritingInputProps> = ({ recognizerInitializ
 
   return (
     <div className="handwriting-input">
-      <CandidateList candidates={candidates} onSelect={handleSelection} />
+      <CandidatePanel
+        candidates={candidates}
+        expanded={isSelectionOpen}
+        onSelect={handleSelection}
+        onExpand={() => setIsSelectionOpen(true)}
+        onClose={() => setIsSelectionOpen(false)}
+      />
       <div className="handwriting-content">
         <div className="handwriting-buttons">
           <button

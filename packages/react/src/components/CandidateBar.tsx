@@ -2,10 +2,7 @@ import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
 import { getPinyinEngine } from '@zh-keyboard/core'
 import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import chevronRight from '../assets/icons/chevron-right.svg'
-import CandidateList from './CandidateList'
-import CandidateSelection from './CandidateSelection'
-import '../styles/CandidateBar.scss'
+import CandidatePanel from './CandidatePanel'
 
 function invalidateCandidateRequest(requestIdRef: { current: number }) {
   requestIdRef.current++
@@ -158,50 +155,19 @@ const CandidateBar = forwardRef<CandidateBarRef, CandidateBarProps>(({
     }
   }
 
-  if (engineLoading) {
-    return (
-      <div className="zhk-candidate">
-        <div className="zhk-candidate__container zhk-candidate__container--loading">
-          <span className="zhk-candidate__loading-text">加载拼音引擎中…</span>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="zhk-candidate">
-      <div className="zhk-candidate__container">
-        {showedPinyin && (
-          <div className="zhk-candidate__pinyin">
-            {showedPinyin}
-          </div>
-        )}
-        <div className="zhk-candidate__bottom-container">
-          {candidates.length > 0 && (
-            <CandidateList
-              candidates={candidates}
-              onSelect={handleSelection}
-            />
-          )}
-          {candidates.length > 0 && (
-            <button
-              className="zhk-candidate__more"
-              disabled={isAllCandidatesLoading}
-              onClick={handleShowAllCandidates}
-            >
-              <img src={chevronRight} alt="更多" />
-            </button>
-          )}
-        </div>
-      </div>
-      {isSelectionOpen && (
-        <CandidateSelection
-          candidates={selectionCandidates}
-          onSelect={handleSelection}
-          onClose={() => setIsSelectionOpen(false)}
-        />
-      )}
-    </div>
+    <CandidatePanel
+      candidates={candidates}
+      selectionCandidates={selectionCandidates}
+      preedit={showedPinyin}
+      loading={engineLoading}
+      loadingText="加载拼音引擎中…"
+      expanding={isAllCandidatesLoading}
+      expanded={isSelectionOpen}
+      onSelect={handleSelection}
+      onExpand={handleShowAllCandidates}
+      onClose={() => setIsSelectionOpen(false)}
+    />
   )
 })
 

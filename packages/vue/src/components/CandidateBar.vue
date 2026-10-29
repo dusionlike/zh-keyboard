@@ -3,9 +3,7 @@ import type { PinyinEngine, PinyinState } from '@zh-keyboard/core'
 import type { KeyEvent } from '../types'
 import { getPinyinEngine } from '@zh-keyboard/core'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import CandidateList from './CandidateList.vue'
-import CandidateSelection from './CandidateSelection.vue'
-import '../styles/CandidateBar.scss'
+import CandidatePanel from './CandidatePanel.vue'
 
 const emit = defineEmits<{
   (e: 'key', payload: KeyEvent): void
@@ -142,40 +140,16 @@ const showedPinyin = computed(() => {
 </script>
 
 <template>
-  <div class="zhk-candidate">
-    <div v-if="engineLoading" class="zhk-candidate__container zhk-candidate__container--loading">
-      <span class="zhk-candidate__loading-text">加载拼音引擎中…</span>
-    </div>
-    <template v-else>
-      <div class="zhk-candidate__container">
-        <!-- 输入拼音显示 -->
-        <div v-if="showedPinyin" class="zhk-candidate__pinyin">
-          {{ showedPinyin }}
-        </div>
-
-        <div class="zhk-candidate__bottom-container">
-          <!-- 候选词列表 -->
-          <CandidateList
-            v-if="candidates.length > 0"
-            :candidates="candidates"
-            @select="handleSelection"
-          />
-          <button
-            v-if="candidates.length > 0"
-            class="zhk-candidate__more"
-            :disabled="isAllCandidatesLoading"
-            @click="handleShowAllCandidates"
-          >
-            <img src="../assets/icons/chevron-right.svg" alt="更多" />
-          </button>
-        </div>
-      </div>
-      <CandidateSelection
-        v-if="isSelectionOpen"
-        :candidates="selectionCandidates"
-        @select="handleSelection"
-        @close="isSelectionOpen = false"
-      />
-    </template>
-  </div>
+  <CandidatePanel
+    :candidates
+    :selection-candidates
+    :preedit="showedPinyin"
+    :loading="engineLoading"
+    loading-text="加载拼音引擎中…"
+    :expanding="isAllCandidatesLoading"
+    :expanded="isSelectionOpen"
+    @select="handleSelection"
+    @expand="handleShowAllCandidates"
+    @close="isSelectionOpen = false"
+  />
 </template>

@@ -40,7 +40,7 @@ function getNumberCount(candidate: string) {
       </div>
     </div>
     <div class="zhk-selection__func">
-      <button class="zhk-selection__func-btn" @click="closeModal">
+      <button type="button" class="zhk-selection__func-btn" aria-label="收起候选词" @click="closeModal">
         返回
       </button>
     </div>

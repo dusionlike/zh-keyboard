@@ -4,7 +4,7 @@ import { useElementSize } from '@vueuse/core'
 import { CanvasDrawer, getHandwritingRecognizer, HandwritingSession, InputComposition, LatestTaskQueue } from '@zh-keyboard/core'
 import { nextTick, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
-import CandidateList from './CandidateList.vue'
+import CandidatePanel from './CandidatePanel.vue'
 import '../styles/HandwritingInput.scss'
 
 const props = defineProps<{
@@ -22,6 +22,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 let canvasDrawer: CanvasDrawer | null = null
 let handwritingSession: HandwritingSession | null = null
 const candidates = ref<string[]>([])
+const isSelectionOpen = ref(false)
 const recognitionQueue = new LatestTaskQueue()
 const composition = new InputComposition({
   onConfirm: () => handwritingSession?.select(0),
@@ -70,6 +71,10 @@ const { startRepeat, stopRepeat } = useKeyRepeater()
 
 watch(() => props.handwritingDelay, delay => canvasDrawer?.setClearDelay(delay))
 watch(() => props.inputElement, () => handwritingSession?.reset())
+watch(candidates, (results) => {
+  if (results.length === 0)
+    isSelectionOpen.value = false
+})
 
 // 组件卸载时清理识别器
 onUnmounted(() => {
@@ -95,9 +100,12 @@ function handleSelection(index: number) {
 
 <template>
   <div class="handwriting-input">
-    <CandidateList
+    <CandidatePanel
       :candidates
+      :expanded="isSelectionOpen"
       @select="handleSelection"
+      @expand="isSelectionOpen = true"
+      @close="isSelectionOpen = false"
     />
     <div class="handwriting-content">
       <div class="handwriting-buttons">
