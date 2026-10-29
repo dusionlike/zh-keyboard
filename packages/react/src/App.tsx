@@ -9,6 +9,7 @@ function App() {
   const [inputValueNum, setInputValueNum] = useState('')
   const [keyboardWidth, setKeyboardWidth] = useState(400)
   const [keyboardHeight, setKeyboardHeight] = useState(300)
+  const [handwritingDelay, setHandwritingDelay] = useState(1000)
   const [position, setPosition] = useState<'static' | 'float' | 'bottom'>(
     window.innerWidth < 960 ? 'bottom' : 'float',
   )
@@ -103,6 +104,19 @@ function App() {
             </>
           )}
 
+          <label htmlFor="handwriting-delay">手写停笔等待：{handwritingDelay / 1000} 秒</label>
+          <input
+            id="handwriting-delay"
+            value={handwritingDelay}
+            onChange={e => setHandwritingDelay(Number(e.target.value))}
+            type="range"
+            min="500"
+            max="5000"
+            step="250"
+            className="width-slider"
+          />
+          <span>停笔后仅清空笔迹，候选词和下划线会保留；选词或开始写下一个字时确认。</span>
+
           <div className="checkbox-container">
             <div className="checkbox-item">
               <input
@@ -140,6 +154,7 @@ function App() {
         <ZhKeyboard
           position={position}
           enableHandwriting
+          handwritingDelay={handwritingDelay}
           disableWhenNoFocus={disableWhenNoFocus}
           style={position === 'bottom'
             ? { width: '100%', height: 'auto' }

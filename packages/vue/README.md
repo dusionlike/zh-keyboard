@@ -31,6 +31,7 @@ pnpm add @zh-keyboard/vue
 | --------------- | --------------------------------- | -------- | ---------------------------------- |
 | defaultMode     | 'en' \| 'zh' \| 'hand' \| 'num'  | 'en'     | 默认的键盘模式                      |
 | enableHandwriting| boolean                          | false    | 是否启用手写输入                    |
+| handwritingDelay| number                            | 1000     | 手写停笔后清空笔迹的等待时间（毫秒），保留候选词和预编辑 |
 | position        | 'static' \| 'float' \| 'bottom'  | 'static' | 键盘定位模式                       |
 | floatMarginTop  | number                            | 10       | 浮动模式下键盘与输入框的距离        |
 | disableWhenNoFocus| boolean                         | true     | 当没有input获得焦点时是否禁用键盘   |
@@ -159,6 +160,18 @@ worker 写法参考 `examples`。
 ### 手写输入模式 (hand)
 
 手写输入模式允许用户通过手写输入汉字，启用此模式需要设置 `enableHandwriting` 为 `true`。
+
+每次抬笔都会更新候选词，并在输入框或 textarea 的光标位置显示带下划线的第一候选。等待期间继续书写时，会原位更新这个预编辑字并重新计时。停笔达到 `handwritingDelay`（默认 1000 毫秒）后，仅清空笔迹，候选词和预编辑下划线仍然保留，可以继续选择其他候选。点选候选词时确认所选文字；若直接开始写下一个字，则先确认上一个字的第一候选，再记录新字的笔迹。确认后才去掉对应下划线。若最后一笔仍在识别，会等待识别完成；识别失败或没有候选时会撤回预览并保留笔迹。切换输入框、按 Escape 或退出手写模式会取消预编辑内容，恢复原有文字和选区。
+
+预编辑会触发 `compositionstart`、`compositionupdate` 和 `compositionend`，中间的输入事件带有 `isComposing: true`。下划线由网页绘制，沿用原生输入框，不会启动系统输入法。需要区分预览和最终输入的业务逻辑可监听这些事件。
+
+可以为书写较慢的用户延长等待时间：
+
+```vue
+<ZhKeyboard enable-handwriting :handwriting-delay="4000" />
+```
+
+也可以通过 `setKeyboardConfig({ handwritingDelay: 4000 })` 设置全局默认值。
 
 ### 数字输入模式 (num)
 

@@ -26,6 +26,11 @@ const props = defineProps({
     type: Boolean,
     default: () => getKeyboardConfig().enableHandwriting ?? false,
   },
+  /** 手写停笔后清空笔迹的等待时间（毫秒），保留候选词和预编辑 */
+  handwritingDelay: {
+    type: Number,
+    default: () => getKeyboardConfig().handwritingDelay ?? 1000,
+  },
   /**
    * 键盘定位模式
    * @default 'static'
@@ -206,6 +211,8 @@ function handleRecognize(results: string[]) {
       <HandwritingInput
         v-if="mode === 'hand'"
         :recognizer-initialized
+        :handwriting-delay
+        :input-element
         @key="handleKeyEvent"
         @exit="goBack"
         @recognize="handleRecognize"

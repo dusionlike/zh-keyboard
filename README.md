@@ -59,6 +59,7 @@ import { setKeyboardConfig } from '@zh-keyboard/core'
 setKeyboardConfig({
   defaultMode: 'zh',
   enableHandwriting: true,
+  handwritingDelay: 1000, // 手写停笔后清空笔迹的等待时间（毫秒），保留候选词和预编辑
   position: 'float',
   // ... 其他配置
 })

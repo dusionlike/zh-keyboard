@@ -1,5 +1,8 @@
 export interface CanvasDrawerOptions {
+  onDrawStart?: () => void
   onDrawEnd?: () => void
+  /** Handle an idle canvas instead of clearing it automatically. */
+  onIdle?: () => void
   clearDelay?: number
 }
 
@@ -102,17 +105,28 @@ export class CanvasDrawer {
   }
 
   resetClearTimer(): void {
-    if (this.clearTimerId) {
+    if (this.clearTimerId !== null) {
       window.clearTimeout(this.clearTimerId)
       this.clearTimerId = null
+    }
+  }
+
+  setClearDelay(delay: number): void {
+    this.options.clearDelay = delay
+    if (this.clearTimerId !== null) {
+      this.startClearTimer()
     }
   }
 
   startClearTimer(): void {
     this.resetClearTimer()
     this.clearTimerId = window.setTimeout(() => {
-      this.clearCanvas()
       this.clearTimerId = null
+      if (this.options.onIdle) {
+        this.options.onIdle()
+      } else {
+        this.clearCanvas()
+      }
     }, this.options.clearDelay)
   }
 
@@ -131,10 +145,12 @@ export class CanvasDrawer {
 
   private handleStart = (e: MouseEvent | TouchEvent) => {
     e.preventDefault()
+    this.resetClearTimer()
+    // Confirm the previous character before recording the new first point.
+    this.options.onDrawStart?.()
     this.isDrawing = true
     const { offsetX, offsetY } = this.getEventCoordinates(e)
     this.startDrawing(offsetX, offsetY)
-    this.resetClearTimer()
   }
 
   private handleMove = (e: MouseEvent | TouchEvent) => {

@@ -14,6 +14,12 @@ export interface KeyboardConfig {
    */
   enableHandwriting?: boolean
   /**
+   * 手写停笔后清空笔迹、准备书写下一个字的等待时间（毫秒）。
+   * 超时后保留候选词和预编辑，选词或开始写下一个字时才确认。
+   * @default 1000
+   */
+  handwritingDelay?: number
+  /**
    * 键盘定位模式
    */
   position?: 'static' | 'float' | 'bottom'
@@ -47,6 +53,7 @@ export interface KeyboardConfig {
 let globalConfig: KeyboardConfig = {
   defaultMode: 'en',
   enableHandwriting: false,
+  handwritingDelay: 1000,
   position: 'static',
   disableWhenNoFocus: true,
 }

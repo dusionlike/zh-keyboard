@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { handwritingTests } from './handwriting'
+
+handwritingTests()
 
 /**
  * Shared test helper for typing pinyin keys on the zh-keyboard.

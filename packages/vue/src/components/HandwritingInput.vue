@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { KeyEvent } from '../types'
 import { useElementSize } from '@vueuse/core'
-import { CanvasDrawer, getHandwritingRecognizer, LatestTaskQueue } from '@zh-keyboard/core'
-import { nextTick, onUnmounted, ref, watchEffect } from 'vue'
+import { CanvasDrawer, getHandwritingRecognizer, HandwritingSession, InputComposition, LatestTaskQueue } from '@zh-keyboard/core'
+import { nextTick, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { useKeyRepeater } from '../hooks/useKeyRepeater'
 import CandidateList from './CandidateList.vue'
 import '../styles/HandwritingInput.scss'
 
 const props = defineProps<{
   recognizerInitialized: boolean
+  handwritingDelay: number
+  inputElement: HTMLInputElement | null
 }>()
 
 const emit = defineEmits<{
@@ -18,16 +20,16 @@ const emit = defineEmits<{
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let canvasDrawer: CanvasDrawer | null = null
+let handwritingSession: HandwritingSession | null = null
+const candidates = ref<string[]>([])
 const recognitionQueue = new LatestTaskQueue()
+const composition = new InputComposition({
+  onConfirm: () => handwritingSession?.select(0),
+  onCancel: () => handwritingSession?.reset(),
+})
 
 // 监听画布自身尺寸变化
 const { width: canvasWidth, height: canvasHeight } = useElementSize(canvasRef)
-
-function clearCanvas() {
-  if (!canvasDrawer)
-    return
-  canvasDrawer.clearCanvas()
-}
 
 function setupCanvas() {
   if (!canvasRef.value)
@@ -37,48 +39,44 @@ function setupCanvas() {
   if (canvasDrawer) {
     canvasDrawer.destroy()
   }
+  handwritingSession?.dispose()
 
   canvasRef.value.width = canvasWidth.value
   canvasRef.value.height = canvasHeight.value
 
-  canvasDrawer = new CanvasDrawer(canvasRef.value, {
-    onDrawEnd: recognizeStroke,
+  let drawer: CanvasDrawer
+  const session = new HandwritingSession({
+    queue: recognitionQueue,
+    recognize: strokeData => getHandwritingRecognizer()?.recognize(strokeData) ?? Promise.resolve([]),
+    onCandidates: results => candidates.value = results,
+    onPreview: candidate => composition.update(props.inputElement, candidate),
+    onCommit: candidate => composition.commit(candidate, () => emit('key', { key: candidate })),
+    onClear: () => drawer.clearCanvas(),
+    onError: error => console.error('识别笔迹失败:', error),
+    getTarget: () => document.activeElement,
   })
+  drawer = new CanvasDrawer(canvasRef.value, {
+    clearDelay: props.handwritingDelay,
+    onDrawStart: () => session.startStroke(),
+    onDrawEnd: () => void session.recognize([...drawer.getStrokeData()]),
+    onIdle: () => void session.finish(),
+  })
+  canvasDrawer = drawer
+  handwritingSession = session
+  candidates.value = []
 }
-
-const candidates = ref<string[]>([])
 
 const { startRepeat, stopRepeat } = useKeyRepeater()
 
-// 识别当前笔迹
-async function recognizeStroke() {
-  if (!canvasDrawer || canvasDrawer.getStrokeData().length === 0)
-    return
-
-  const recognizer = getHandwritingRecognizer()
-  if (recognizer) {
-    try {
-      // 将 readonly array 转换为 mutable array
-      const strokeData = [...canvasDrawer.getStrokeData()]
-      const results = await recognitionQueue.submit(() => recognizer.recognize(strokeData))
-
-      if (results !== undefined) {
-        candidates.value = results
-      }
-    } catch (error) {
-      console.error('识别笔迹失败:', error)
-    }
-  } else {
-    console.warn('手写识别服务不可用')
-  }
-}
+watch(() => props.handwritingDelay, delay => canvasDrawer?.setClearDelay(delay))
+watch(() => props.inputElement, () => handwritingSession?.reset())
 
 // 组件卸载时清理识别器
 onUnmounted(() => {
   if (canvasDrawer) {
     canvasDrawer.destroy()
   }
-  recognitionQueue.clearPending()
+  handwritingSession?.dispose()
 })
 
 watchEffect(() => {
@@ -91,12 +89,7 @@ watchEffect(() => {
 })
 
 function handleSelection(index: number) {
-  const candidate = candidates.value[index]
-  if (!candidate)
-    return
-  emit('key', { key: candidate })
-  candidates.value = []
-  clearCanvas()
+  handwritingSession?.select(index)
 }
 </script>
 

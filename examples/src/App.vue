@@ -9,6 +9,7 @@ const inputValueHand = ref('')
 const inputValueNum = ref('')
 const keyboardWidth = ref(400)
 const keyboardHeight = ref(300)
+const handwritingDelay = ref(1000)
 const position = ref<'static' | 'float' | 'bottom'>('float')
 const disableWhenNoFocus = ref(true)
 
@@ -81,6 +82,10 @@ onMounted(() => {
           />
         </template>
 
+        <label for="handwriting-delay">手写停笔等待：{{ handwritingDelay / 1000 }} 秒</label>
+        <input id="handwriting-delay" v-model.number="handwritingDelay" type="range" min="500" max="5000" step="250" class="width-slider" />
+        <span>停笔后仅清空笔迹，候选词和下划线会保留；选词或开始写下一个字时确认。</span>
+
         <div class="checkbox-container">
           <div class="checkbox-item">
             <input
@@ -105,7 +110,7 @@ onMounted(() => {
     </div>
 
     <div class="keyboard-wrapper">
-      <ZhKeyboard :position="position" :style="position === 'bottom' ? { width: '100%', height: 'auto' } : { width: `${keyboardWidth}px`, height: `${keyboardHeight}px` }" enable-handwriting :disable-when-no-focus="disableWhenNoFocus" />
+      <ZhKeyboard :position="position" :style="position === 'bottom' ? { width: '100%', height: 'auto' } : { width: `${keyboardWidth}px`, height: `${keyboardHeight}px` }" enable-handwriting :disable-when-no-focus="disableWhenNoFocus" :handwriting-delay />
     </div>
   </div>
 </template>

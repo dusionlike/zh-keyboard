@@ -54,11 +54,22 @@ export function getInputElement() {
   }
 }
 
+/** Set the native value without dispatching an input event. */
+export function setInputValue(inputElement: HTMLInputElement, value: string): void {
+  // Bypass instance-level value tracking so React also receives the input change.
+  const nativeSetter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(inputElement), 'value')?.set
+  if (nativeSetter) {
+    nativeSetter.call(inputElement, value)
+  } else {
+    inputElement.value = value
+  }
+}
+
 /**
  * 更新输入框值并设置光标，触发 input 事件
  */
 function applyEdit(inputElement: HTMLInputElement, value: string, cursor: number) {
-  inputElement.value = value
+  setInputValue(inputElement, value)
   moveCursor(inputElement, cursor)
   inputElement.dispatchEvent(new Event('input', { bubbles: true }))
 }

@@ -15,6 +15,7 @@ import '../styles/ZhKeyboard.scss'
 interface ZhKeyboardProps {
   defaultMode?: KeyBoardMode
   enableHandwriting?: boolean
+  handwritingDelay?: number
   position?: 'static' | 'float' | 'bottom'
   floatMarginTop?: number
   disableWhenNoFocus?: boolean
@@ -29,6 +30,7 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
   const {
     defaultMode = getKeyboardConfig().defaultMode ?? 'en',
     enableHandwriting = getKeyboardConfig().enableHandwriting ?? false,
+    handwritingDelay = getKeyboardConfig().handwritingDelay ?? 1000,
     position = getKeyboardConfig().position ?? 'static',
     floatMarginTop = getKeyboardConfig().floatMarginTop ?? 10,
     disableWhenNoFocus = getKeyboardConfig().disableWhenNoFocus ?? true,
@@ -189,6 +191,8 @@ const ZHKeyboardContent: React.FC<ZhKeyboardProps> = (props) => {
               {mode === 'hand' && (
                 <HandwritingInput
                   recognizerInitialized={recognizerInitialized}
+                  handwritingDelay={handwritingDelay}
+                  inputElement={isInputElement(activeElement) ? activeElement : null}
                   onKey={handleKeyEvent}
                   onExit={goBack}
                 />
