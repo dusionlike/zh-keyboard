@@ -18,7 +18,7 @@ export default defineConfig({
         viewport: { width: 500, height: 900 },
         baseURL: 'http://localhost:5174',
       },
-      testMatch: 'vue.spec.ts',
+      testMatch: ['vue.spec.ts', 'diag.spec.ts'],
     },
     {
       name: 'react',
@@ -28,6 +28,11 @@ export default defineConfig({
         baseURL: 'http://localhost:5175',
       },
       testMatch: 'react.spec.ts',
+    },
+    {
+      name: 'react-package',
+      testDir: './packages/react/e2e',
+      testMatch: 'package.spec.ts',
     },
   ],
   webServer: [

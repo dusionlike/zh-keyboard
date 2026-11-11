@@ -8,7 +8,7 @@
     "dev": "pnpm -r --parallel --filter=./packages/* run dev",
     "build": "pnpm -r --filter=./packages/* run build",
     "test": "pnpm -r --filter=./packages/* run test",
-    "test:e2e": "playwright test",
+    "test:e2e": "pnpm --filter @zh-keyboard/react... build && playwright test",
     "lint": "eslint --ext .js,.ts,.tsx,.vue . --fix",
     "release": "bumpp -r && pnpm publish -r --access public",
     "examples:build": "pnpm run build && cd examples && pnpm run build"

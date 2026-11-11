@@ -1,7 +1,7 @@
 import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { copyAssetsPlugin } from '@zh-keyboard/copy-assets'
-import { defineConfig } from 'vite'
+import { defineConfig, esmExternalRequirePlugin } from 'vite'
 import dts from 'vite-plugin-dts'
 
 // https://vite.dev/config/
@@ -17,6 +17,9 @@ export default defineConfig((env) => {
     return {
       plugins: [
         react(),
+        // React externals belong to this plugin so bundled CommonJS dependencies
+        // use ESM imports instead of leaving browser-incompatible require() calls.
+        esmExternalRequirePlugin({ external: ['react', 'react-dom'] }),
         dts({ tsconfigPath: './tsconfig.app.json' }),
       ],
       build: {
@@ -30,8 +33,6 @@ export default defineConfig((env) => {
         copyPublicDir: false,
         rollupOptions: {
           external: [
-            'react',
-            'react-dom',
             '@zh-keyboard/core',
           ],
           output: {
